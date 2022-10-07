@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "CHashTable.h"
-#include "CXXBYTE.h"
+#include "DataTypes/CHashTable.h"
+#include "DataTypes/CXXBYTE.h"
 
 struct CHashNodeC32BYTEtoU32;
 
