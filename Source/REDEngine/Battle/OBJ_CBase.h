@@ -39,7 +39,7 @@ struct LoopedFloatParam
 	int FrameCounter;
 	int FrameCountMax;
 	float MINVALUE;
-	float MAXVALUE;
+	float MAXVALUE = 10;
 };
 
 struct __declspec(align(4)) CColorWithSpeed
@@ -62,6 +62,7 @@ struct AtkShakeCameraParam
 
 struct CAtkParam
 {
+	CAtkParam();
   int m_AtkType;
   int m_AtkLevel;
   int m_AtkLevelForSousai;
@@ -199,6 +200,8 @@ struct CAtkParam
   bool m_bAtkHitBankSEOverwrite;
   bool m_bAtkGuardBankSEFromSet;
   bool m_bAtkGuardBankSEOverwrite;
+
+	void CAtkParamInit();
 };
 
 struct AtkTimeCtrlParam
@@ -267,10 +270,10 @@ struct CActionRequestInfo
 	CXXBYTE<32> m_RequestName;
 	unsigned int m_RequestFlag;
 	CXXBYTE<32> m_RequestGotoLabel;
-	int m_RequestSkillID;
+	int m_RequestSkillID = -1;
 	bool m_SomeSkillIsRequested;
 	bool m_SomeSkillIsRequestReserved;
-	int m_RequestGCSkill;
+	int m_RequestGCSkill = -1;
 };
 
 struct __declspec(align(4)) CVoiceInfo
@@ -301,7 +304,7 @@ struct CExHoming
 {
 	EXHOMING m_HomingType;
 	CO_TYPE m_HomingObj;
-	POS_TYPE m_HomingPos;
+	POS_TYPE m_HomingPos = POS_ZERO;
 	int m_HomingOfsX;
 	int m_HomingOfsY;
 	int m_HomingParamA;
@@ -323,12 +326,12 @@ struct __declspec(align(4)) CJumpHoming
 
 struct sSoundReq
 {
-	int m_Volume;
-	int m_Pitch;
+	int m_Volume = 100;
+	int m_Pitch = 100;
 	unsigned int m_SoundReqFlag;
 	unsigned int m_Channel;
-	int m_RandomChannel;
-	ESoundBank m_Bank;
+	int m_RandomChannel = -1;
+	ESoundBank m_Bank = SND_BANK_INVALID;
 	int m_Priority;
 };
 
@@ -403,6 +406,8 @@ struct __declspec(align(4)) FBoneController
 	bool bIgnoreObjStop;
 	bool bForceUpdateSkeleton;
 	bool bResetOnActionChange;
+
+	void SetResetOnActionChange(bool flag);
 };
 
 class OBJ_CBase
@@ -415,7 +420,6 @@ public:
 		TBlendParam<float> BlendParam;
 	};
 
-	/* 322487 */
 	struct SCellSlowParam
 	{
 		bool bActive;
@@ -470,7 +474,7 @@ public:
 	struct SRollbackData
 	{
 		CXXBYTE<32> LinkParticleName;
-		CO_TYPE LinkParticleObjType;
+		CO_TYPE LinkParticleObjType = CO_SELF;
 		bool LinkParticleUseArg;
 		CCreateArg LinkParticleCreateArg;
 		bool bLinkParticleSet;
@@ -505,6 +509,8 @@ public:
 		bool bForceDispFlag;
 	};
 
+	OBJ_CBase();
+	
 	int ObjBaseSyncBegin;
 	unsigned int m_AtkPriority;
 	ACTV_STATE m_ActiveState;
@@ -949,8 +955,15 @@ public:
 	SRollbackMeshControl m_RollbackMeshControl[50];
 	int m_RollbackMeshControlNum;
 	int ObjBaseSyncEnd;
-	bool bLinkPSCWasDeleted;
+	bool bLinkPSCWasDeleted = true;
 	AA_Handle m_hResource;
 	CXXBYTE<32> m_StatisticsActionName;
 	StatisticsCheckSkillData m_StatisticsCheckSkill[108];
+
+	//functions
+	void ObjectConstructor_ForObject();
+	void SetHitPointMax(int val);
+	void SetHitPoint(int val);
+	void SetupPawn();
+	void ResetScreenPushOffset();
 };
