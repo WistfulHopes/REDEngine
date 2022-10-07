@@ -247,6 +247,42 @@ int OBJ_CBase::GetPushColW()
 	return m_PushColWidth;
 }
 
+int OBJ_CBase::GetPushColH()
+{
+	if (m_PushColHeight < 0)
+	{
+		if (m_IsPlayerObj)
+		{
+			OBJ_CCharBase* player = (OBJ_CCharBase*)this;
+			if ((m_ActionFlag & 1) != 0 || GetPosY() > 0)
+			{
+				return player->ply_PushColHeightAir;
+			}
+			if ((player->m_PlayerFlag & PLFLG_CROUCH) != 0 || (player->m_PlayerFlag & PLFLG_LOW_BALANCE) != 0)
+			{
+				return player->ply_PushColHeightCrouch;
+			}
+			return player->ply_PushColHeightStand;
+		}
+		return 100;
+	}
+	return m_PushColHeight;
+}
+
+int OBJ_CBase::GetPushColHLow()
+{
+	if (m_PushColHeightLow == -1)
+	{
+		if (m_IsPlayerObj && (m_ActionFlag & 1) != 0 || GetPosY() > 0)
+		{
+			OBJ_CCharBase* player = (OBJ_CCharBase*)this;
+			return player->ply_PushColHeightLowAir;
+		}
+		return 0;
+	}
+	return m_PushColHeightLow;
+}
+
 int OBJ_CBase::GetPosX()
 {
 	//code for rotated objects goes here
@@ -300,7 +336,29 @@ int OBJ_CBase::GetObjDir()
 
 void OBJ_CBase::GetPushScreenRect(int* L, int* T, int* R, int* B)
 {
-	
+	GetPushWorldRect(0, T, 0, B);
+	GetPushWorldRectForWorldClip(L, R);
+	int dir;
+	if (m_pLinkObject_Direction.m_Ptr)
+	{
+		dir = m_pLinkObject_Direction.m_Ptr->GetObjDir();
+	}
+	else
+	{
+		dir = m_Direction;
+	}
+	if (!dir)
+	{
+		*R += m_PushScreenOffsetFront;
+		*L -= m_PushScreenOffsetBack;
+	}
+	else
+	{
+		*L -= m_PushScreenOffsetFront;
+		*R += m_PushScreenOffsetBack;
+	}
+	*T += m_PushScreenOffsetTop;
+	*B += m_PushScreenOffsetBottom;
 }
 
 void OBJ_CBase::GetPushWorldRect(int* L, int* T, int* R, int* B)
@@ -314,5 +372,103 @@ void OBJ_CBase::GetPushWorldRect(int* L, int* T, int* R, int* B)
 		dir = m_Direction;
 	int width = GetPushColW() / 2;
 	int front = GetPushColW() + m_PushColWidthFront;
-	
+	int La = front;
+	if (!dir)
+	{
+		La = width;
+		width = front;
+	}
+	int height = GetPushColH();
+	*T = posY + height;
+	int heightlow = GetPushColHLow();
+	*B = posY - heightlow;
+	if (L)
+	{
+		if (R)
+		{
+			*L = posX - La;
+			*R = posX + width;
+			if (m_ClsnAnalyzer.m_CollisionNum[5])
+			{
+				CCmnRect world = m_ClsnAnalyzer.m_CollisionAddr[5]->m_WorldRect;
+				int worldL;
+				int worldR;
+				worldL = (world.m_W + world.m_X) * 1000;
+				worldR = world.m_X * -1000;
+				*L = posX - worldL;
+				*R = posX + worldR;
+			}
+		}
+	}
+	int Ra;
+	if ((m_CollisionFlag & OBJ_CLSN_LOCKING) != 0 && (m_CollisionFlag3 & OBJ_CLSN_3_NOFAT_PUSHCOL_LOCKING) != 0)
+	{
+		if (L && R)
+		{
+			m_pLockLinkObj.m_Ptr->GetPushWorldRect(&La, B, &Ra, &posY);
+			if (*T < *B)
+				*T = *B;
+			if (*B > posY)
+				*B = posY;
+			if (*L > La)
+				*L = La;
+			if (*R < Ra)
+				*R = Ra;
+		}
+		else
+		{
+			m_pLockLinkObj.m_Ptr->GetPushWorldRect(0, B, 0, &posY);
+			if (*T < *B)
+				*T = *B;
+			if (*B > posY)
+				*B = posY;
+		}
+	}
+	if (m_pLinkObject_PushCollision.m_Ptr)
+	{
+		if (L && R)
+		{
+			m_pLinkObject_PushCollision.m_Ptr->GetPushWorldRect(&La, B, &Ra, &posY);
+			if (*T < *B)
+				*T = *B;
+			if (*B > posY)
+				*B = posY;
+			if (*L > La)
+				*L = La;
+			if (*R < Ra)
+				*R = Ra;
+		}
+		else
+		{
+			m_pLinkObject_PushCollision.m_Ptr->GetPushWorldRect(0, B, 0, &posY);
+			if (*T < *B)
+				*T = *B;
+			if (*B > posY)
+				*B = posY;
+		}
+	}
+}
+
+void OBJ_CBase::GetPushWorldRectForWorldClip(int* L, int* R)
+{
+	*L = m_PosX - RED_SIDE_OFFSET - 35000;
+	*R = RED_SIDE_OFFSET + GetPosX() + 35000;
+	int La;
+	int Ra;
+	if ((m_CollisionFlag & OBJ_CLSN_LOCKING) != 0)
+	{
+		m_pLockLinkObj.m_Ptr->GetPushWorldRectForWorldClip(&La, &Ra);
+		if ( *L > La )
+			*L = La;
+		if ( *R < Ra )
+			*R = Ra;
+	}
+	if (m_pLinkObject_PushCollision.m_Ptr)
+	{
+		m_pLinkObject_PushCollision.m_Ptr->GetPushWorldRectForWorldClip(&La, &Ra);
+		if ( *L > La )
+			*L = La;
+		if ( *R < Ra )
+			*R = Ra;
+	}
 }

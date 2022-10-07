@@ -967,10 +967,13 @@ public:
 	void SetupPawn();
 	void ResetScreenPushOffset();
 	int GetPushColW();
+	int GetPushColH();
+	int GetPushColHLow();
 	int GetPosX();
 	int GetPosY();
 	int GetAngleY();
 	int GetObjDir();
 	void GetPushScreenRect(int *L, int *T, int *R, int *B);
 	void GetPushWorldRect(int *L, int *T, int *R, int *B);
+	void GetPushWorldRectForWorldClip(int *L, int *R);
 };

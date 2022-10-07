@@ -1682,6 +1682,8 @@ constexpr float s_MaterialDefaultValList[29] =
 	0.0
 };
 
+constexpr int RED_SIDE_OFFSET = 50000;
+
 static float GetObjMaterialParamDefaultVal(MATERIAL_PARAM param)
 {
 	return s_MaterialDefaultValList[param];
