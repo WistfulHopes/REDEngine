@@ -6,6 +6,8 @@ class OBJ_CCharBase;
 class BATTLE_TeamManager
 {
 public:
+	BATTLE_TeamManager();
+	
 	SIDE_ID m_SideID;
 	OBJ_CCharBase *m_pMainPlayerObject;
     OBJ_CCharBase *m_pMemberObjects[3];

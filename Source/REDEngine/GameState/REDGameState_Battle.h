@@ -6,6 +6,7 @@
 #include "REDParticleDataAsset.h"
 #include "REDGameState.h"
 #include "REDEngine/Battle/BATTLE_CObjectManager.h"
+#include "REDEngine/Battle/BATTLE_CScreenManager.h"
 #include "REDGameState_Battle.generated.h"
 
 class AREDPawnPlayer;
@@ -28,6 +29,23 @@ protected:
 	UPROPERTY()
 	UREDParticleDataAsset* BGParticle[6];
 	TUniquePtr<FTeamInfo> TeamInfo[3];
+public:
 	TUniquePtr<BATTLE_CObjectManager> BattleObjectManager;
-	TUniquePtr<BATTLE_CObjectManager> ScreenManager;
+	TUniquePtr<BATTLE_CScreenManager> ScreenManager;
+	uint8 m_BattleState;
+	int m_NetworkErrorState;
+	int m_NetworkErrorStatePrev;
+	int m_BattleUpdateCount;
+	int m_RoundUpdateCount;
+	int m_SendMessageInterval;
+	bool bNetworkBattle;
+	bool bRankMatchBattle;
+	bool bCasualMatchBattle;
+	bool bLobbyMatchBattle;
+	bool bAllocateInstances;
+
+	virtual void HandleMatchIsWaitingToStart() override;
+	virtual void Tick(float DeltaSeconds) override;
+	void UpdateBattle(float DeltaSeconds);
+	void UpdateBattleSub(float DeltaSeconds, bool bUpdateDraw);
 };

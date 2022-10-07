@@ -60,6 +60,8 @@ public:
 		bool bCurrentApplyParticle;
 	};
 
+	BATTLE_CObjectManager();
+	
 	BATTLE_TeamManager m_TeamManager[2];
 	unsigned int m_BOMFlag;
 	FINISH_BG m_FinishBG;
@@ -208,4 +210,6 @@ public:
 	int ObjMngCopyEnd;
 	OBJ_CBase m_ObjVector[101];
 	OBJ_CCharBase m_CharVector[6];
+
+	void BOM_ConstructorSub();
 };

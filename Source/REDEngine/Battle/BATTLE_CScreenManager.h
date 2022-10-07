@@ -28,7 +28,8 @@ public:
 		int bottom;
 		int higherBottom;
 	};
-
+	BATTLE_CScreenManager();
+	
 	OBJ_CBase *m_ppObject[6];
 	unsigned int m_TargetObjectFlag[6];
 	unsigned int m_TargetObjectNum;
@@ -104,4 +105,7 @@ public:
 	FMatrix m_OffsetMatrix;
 	FMatrix m_PrevCameraMatrix;
 	OBJ_BOX m_ObjBox;
+
+	void UpdateScreenPosition(bool bQuick);
+	void SetScreenCornerObject(bool bQuick);
 };

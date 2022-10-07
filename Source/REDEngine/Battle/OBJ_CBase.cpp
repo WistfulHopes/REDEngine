@@ -1,6 +1,7 @@
 ﻿#include "OBJ_CBase.h"
 
 #include "Constants.h"
+#include "OBJ_CCharBase.h"
 #include "DataTypes/AttackFlags.h"
 
 CAtkParam::CAtkParam()
@@ -222,4 +223,96 @@ void OBJ_CBase::ResetScreenPushOffset()
 {
 	m_PushScreenOffsetFront = 0;
 	m_PushScreenOffsetTop = 0;
+}
+
+int OBJ_CBase::GetPushColW()
+{
+	if (m_PushColWidth < 0)
+	{
+		if (m_IsPlayerObj)
+		{
+			OBJ_CCharBase* player = (OBJ_CCharBase*)this;
+			if ((m_ActionFlag & 1) != 0 || GetPosY() > 0)
+			{
+				return player->ply_PushColWidthAir;
+			}
+			if ((player->m_PlayerFlag & PLFLG_CROUCH) != 0 || (player->m_PlayerFlag & PLFLG_LOW_BALANCE) != 0)
+			{
+				return player->ply_PushColWidthCrouch;
+			}
+			return player->ply_PushColWidthStand;
+		}
+		return 120;
+	}
+	return m_PushColWidth;
+}
+
+int OBJ_CBase::GetPosX()
+{
+	//code for rotated objects goes here
+	if (m_pLinkObject_Position.m_Ptr)
+	{
+		return m_PosX + m_pLinkObject_Position.m_Ptr->GetPosX();
+	}
+	if (m_pLinkObject_PositionCenter.m_Ptr)
+	{
+		return m_PosX + m_pLinkObject_PositionCenter.m_Ptr->GetPosX();
+	}
+	if ((m_CollisionFlag & 0x40800) == 0x40800) //lock link position and locked
+	{
+		return m_PosX + m_pLockLinkObj.m_Ptr->GetPosX();
+	}
+	return m_PosX;
+}
+
+int OBJ_CBase::GetPosY()
+{
+	if (m_pLinkObject_Position.m_Ptr)
+	{
+		return m_PosY + m_pLinkObject_Position.m_Ptr->GetPosY();
+	}
+	if (m_pLinkObject_PositionCenter.m_Ptr)
+	{
+		return m_PosY + m_pLinkObject_PositionCenter.m_Ptr->GetPosY();
+	}
+	if ((m_CollisionFlag & 0x40800) == 0x40800) //lock link position and locked
+		{
+		return m_PosY + m_pLockLinkObj.m_Ptr->GetPosY();
+		}
+	return m_PosY;
+}
+
+int OBJ_CBase::GetAngleY()
+{
+	OBJ_CBase* target = m_pLinkObject_Angle.m_Ptr;
+	if ( target )
+		return m_AngleYDeg_x1000 + target->GetAngleY();
+	return m_AngleYDeg_x1000;
+}
+
+int OBJ_CBase::GetObjDir()
+{
+	OBJ_CBase* target = m_pLinkObject_Direction.m_Ptr;
+	if (target)
+		return target->m_Direction;
+	return m_Direction;	
+}
+
+void OBJ_CBase::GetPushScreenRect(int* L, int* T, int* R, int* B)
+{
+	
+}
+
+void OBJ_CBase::GetPushWorldRect(int* L, int* T, int* R, int* B)
+{
+	int posX = GetPosX();
+	int posY = GetPosY();
+	int dir;
+	if (m_pLinkObject_Direction.m_Ptr)
+		dir = m_pLinkObject_Direction.m_Ptr->GetObjDir();
+	else
+		dir = m_Direction;
+	int width = GetPushColW() / 2;
+	int front = GetPushColW() + m_PushColWidthFront;
+	
 }

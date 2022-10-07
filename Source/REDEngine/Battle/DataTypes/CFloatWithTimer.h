@@ -9,4 +9,7 @@ struct __declspec(align(4)) CFloatWithTimer
 	int m_DestTimerMax;
 	bool m_bSet;
 	bool m_bPause;
+
+	void Init();
+	void SetVal(float beginVal, float destVal, unsigned int time);
 };

@@ -74,4 +74,8 @@ protected:
 	UPROPERTY()
 	UGameAsset *CharaIconAssets;
 	bool bOverrideLightDir;
+
+public:
+	virtual void HandleMatchIsWaitingToStart() override;
+	virtual void Tick(float DeltaSeconds) override;
 };

@@ -63,4 +63,6 @@ public:
 
 	Battle_Record m_Record[2];
     const CSkillInfo *m_pSkill[2];
+
+	void ResetRecord();
 };
