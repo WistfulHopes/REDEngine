@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 template <typename T>
-struct AA_Flag<T>
+class AA_Flag
 {
 	T m_Flag;
 };

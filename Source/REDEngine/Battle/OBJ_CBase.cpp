@@ -28,7 +28,7 @@ void CAtkParam::CAtkParamInit()
 	m_AtkHitPositionX = 0x7FFFFFFF;
 	m_AtkHitPositionY = 0x7FFFFFFF;
 	m_AtkExHitParamMax = 1000000;
-	m_AtkExHitParamMin = 0x7FFFFFFF000000;
+	m_AtkExHitParamMin = -1000000;
 	m_AtkKizetsuDamage = 0x7FFFFFFF;
 	m_AtkFlag |= APFLG3_NO_FINISH_CAMERA;
 	m_AtkHitBack = 100;
@@ -142,7 +142,6 @@ void OBJ_CBase::ObjectConstructor_ForObject()
 	m_MutekiHitStopSelf = -2;
 	m_MutekiHitStopEnemy = -2;
 	m_MutekiAtkLevel = 100;
-	m_AstralCameraTimer = 25600;
 	m_ShotDamageRate = 100;
 	m_DispModel = true;
 	SetupPawn();

@@ -12,7 +12,7 @@ enum EACCType
 };
 
 template <typename T>
-struct __declspec(align(4)) TBlendParam<T>
+struct __declspec(align(4)) TBlendParam
 {
 	T Val;
 	T StartVal;

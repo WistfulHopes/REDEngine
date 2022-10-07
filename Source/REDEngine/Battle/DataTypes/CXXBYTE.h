@@ -1,8 +1,9 @@
 ﻿#pragma once
 
 template <int i>
-struct CXXBYTE<i>
+class CXXBYTE
 {
+public:
 	char m_Buf[i];
 };
 

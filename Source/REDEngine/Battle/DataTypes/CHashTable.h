@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 template <typename T>
-class CHashTable<T>
+class CHashTable
 {
 public:
 	T *m_Node;

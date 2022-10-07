@@ -5,7 +5,7 @@
 #include "REDExBoneAnimInstance.generated.h"
 
 UCLASS(NonTransient)
-class RED_API UREDExBoneAnimInstance : public UREDAnimInstance {
+class REDENGINE_API UREDExBoneAnimInstance : public UREDAnimInstance {
     GENERATED_BODY()
 public:
     UPROPERTY(BlueprintReadOnly, Transient)
