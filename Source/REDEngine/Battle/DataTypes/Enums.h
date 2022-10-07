@@ -1,0 +1,628 @@
+﻿#pragma once
+
+UENUM()
+enum SIDE_ID : int32
+{
+	SIDE_BEGIN = 0x0,
+	SIDE_1P = 0x0,
+	SIDE_2P = 0x1,
+	SIDE_ID_NUM = 0x2,
+	SIDE_COMMON = 0x2,
+	SIDE_ID_NUM_WITH_COMMON = 0x3,
+	SIDE_ID_INVALID = 0x4,
+};
+
+UENUM()
+enum ECharaID : int32
+{
+	CHARA_ID_SOL = 0x0,
+	CHARA_ID_KYK = 0x1,
+	CHARA_ID_MAY = 0x2,
+	CHARA_ID_AXL = 0x3,
+	CHARA_ID_CHP = 0x4,
+	CHARA_ID_POT = 0x5,
+	CHARA_ID_FAU = 0x6,
+	CHARA_ID_MLL = 0x7,
+	CHARA_ID_ZAT = 0x8,
+	CHARA_ID_RAM = 0x9,
+	CHARA_ID_LEO = 0xA,
+	CHARA_ID_NAG = 0xB,
+	CHARA_ID_GIO = 0xC,
+	CHARA_ID_ANJ = 0xD,
+	CHARA_ID_INO = 0xE,
+	CHARA_ID_GLD = 0xF,
+	CHARA_ID_JKO = 0x10,
+	CHARA_ID_COS = 0x11,
+	CHARA_ID_234 = 0x12,
+	CHARA_ID_345 = 0x13,
+	CHARA_ID_456 = 0x14,
+	CHARA_ID_567 = 0x15,
+	CHARA_ID_678 = 0x16,
+	CHARA_ID_789 = 0x17,
+	CHARA_ID_901 = 0x18,
+	CHARA_ID_012 = 0x19,
+	CHARA_ID_147 = 0x1A,
+	CHARA_ID_258 = 0x1B,
+	CHARA_ID_369 = 0x1C,
+	CHARA_ID_741 = 0x1D,
+	CHARA_ID_852 = 0x1E,
+	CHARA_ID_DMY = 0x1F,
+	CHARA_ID_MAX = 0x20,
+};
+
+UENUM()
+enum EMemberID : int32
+{
+	MemberID_Begin = 0x0,
+	MemberID_01 = 0x0,
+	MemberID_02 = 0x1,
+	MemberID_03 = 0x2,
+	MemberID_MAX = 0x3,
+	MemberID_INVALID = 0x4,
+};
+
+UENUM()
+enum EBattleScript : int32
+{
+	BATTLE_SCRIPT_DEFAULT = 0x0,
+	BATTLE_SCRIPT_BLACK = 0x1,
+	BATTLE_SCRIPT_BOSS = 0x2,
+	BATTLE_SCRIPT_EXBOSS = 0x3,
+	BATTLE_SCRIPT_MAX = 0x4,
+};
+
+enum BG_TYPE : int32
+{
+	BG_Normal = 0x0,
+	BG_Ultimate = 0x1,
+	BG_BlackOut = 0x2,
+	BG_Ichigeki = 0x3,
+	BG_SimpleBlackOut = 0x2,
+};
+
+enum ZLINE : int32
+{
+	ZLINE_FAR = 0x0,
+	ZLINE_MIDDLE = 0x1,
+	ZLINE_NEAR = 0x2,
+	ZLINE_NEAREST = 0x3,
+	ZLINE_MAX = 0x4,
+};
+
+enum ZLINE_LEVEL : __int32
+{
+	ZLL_LVMIN = 0x0,
+	ZLL_LV0 = 0x1,
+	ZLL_LV1 = 0x2,
+	ZLL_LV2 = 0x3,
+	ZLL_LV3 = 0x4,
+	ZLL_LVMAX = 0x5,
+};
+
+enum ACTV_STATE : int32
+{
+	ACTV_NOT_ACTIVE = 0x0,
+	ACTV_ACTIVE = 0x1,
+	ACTV_REQ_ACTIVE = 0x2,
+	ACTV_REQ_NO_ACTIVE = 0x3,
+	ACTV_WAITING_BEGIN = 0x4,
+	ACTV_WAITING_0 = 0x4,
+	ACTV_WAITING_1 = 0x5,
+	ACTV_WAITING_2 = 0x6,
+};
+
+enum RS_RENDER_STAGE : int32
+{
+	RS_Default = 0x0,
+	RS_Front = 0x1,
+	RS_Back = 0x2,
+	RS_LittleFront = 0x3,
+	RS_FrontFront = 0x4,
+	RS_Emblem = 0x5,
+	RS_DefaultN1 = 0x6,
+	RS_DefaultN2 = 0x7,
+	RS_DefaultN3 = 0x8,
+	RS_DefaultN4 = 0x9,
+	RS_DefaultN5 = 0xA,
+	RS_DefaultF1 = 0xB,
+	RS_DefaultF2 = 0xC,
+	RS_DefaultF3 = 0xD,
+	RS_DefaultF4 = 0xE,
+	RS_DefaultF5 = 0xF,
+};
+
+enum SKILL_CATEGORY : int
+{
+	SCA_Neutral = 0x0,
+	SCA_FWalk = 0x1,
+	SCA_BWalk = 0x2,
+	SCA_FDash = 0x3,
+	SCA_BDash = 0x4,
+	SCA_FJump = 0x5,
+	SCA_BJump = 0x6,
+	SCA_VJump = 0x7,
+	SCA_FHighJump = 0x8,
+	SCA_BHighJump = 0x9,
+	SCA_VHighJump = 0xA,
+	SCA_FAirJump = 0xB,
+	SCA_BAirJump = 0xC,
+	SCA_VAirJump = 0xD,
+	SCA_FAirDash = 0xE,
+	SCA_BAirDash = 0xF,
+	SCA_EtcLeverMove = 0x10,
+	SCA_NormalSkill = 0x11,
+	SCA_SpecialSkill = 0x12,
+	SCA_SpecialSkillOneButton = 0x13,
+	SCA_UltimateSkill = 0x14,
+	SCA_IchigekiSkill = 0x15,
+	SCA_DeadAngleAttack = 0x16,
+	SCA_DamageBurst = 0x17,
+	SCA_MaximumBurst = 0x18,
+	SCA_Recipe = 0x19,
+	SCA_FaultlessDefence = 0x1A,
+	SCA_RequestAssistAttack = 0x1B,
+	SCA_RequestAssistAttackUltimate = 0x1C,
+	SCA_RequestChangeMember = 0x1D,
+	SCA_RequestChangeMemberUltimate = 0x1E,
+	SCA_ChangeAttack = 0x1F,
+	SCA_ChangeAttackUltimate1 = 0x20,
+	SCA_ChangeAttackUltimate2 = 0x21,
+	SCA_AssistAttack = 0x22,
+	SCA_AssistAttackUltimate = 0x23,
+	SCA_GCChangeAttack = 0x24,
+	SCA_HomingDashAttack = 0x25,
+	SCA_DragonRush = 0x26,
+	SCA_MikiwameMove = 0x27,
+	SCA_ExSpecialSkill = 0x28,
+	SCA_ShotReflect = 0x29,
+	SCA_ARenSkill = 0x2A,
+	SCA_LimitBurst = 0x2B,
+	SCA_SparkingBurst = 0x2C,
+	SCA_Kiaitame = 0x2D,
+	SCA_RequestGCChangeAttack = 0x2E,
+	SCA_FDash2Button = 0x2F,
+	SCA_BDash2Button = 0x30,
+	SCA_FAirDash2Button = 0x31,
+	SCA_BAirDash2Button = 0x32,
+	SCA_RomanCancelForce = 0x33,
+	SCA_RomanCancelHit = 0x34,
+	SCA_RomanCancelMove__ = 0x35,
+	SCA_RomanCancelNeutral = 0x36,
+	SCA_RomanCancelKaraburi = 0x37,
+	SCA_IchigekiJunbi = 0x38,
+	SCA_CounterGuard = 0x39,
+	SCA_WSB = 0x3A,
+	SCA_RomanCanceObject = 0x3B,
+	SCA_NUM = 0x3C,
+};
+
+enum CHT_TYPE : int32
+{
+	CHT_Default = 0x0,
+	CHT_Non = 0x1,
+	CHT_Force = 0x2,
+};
+
+enum HIT_EFFECT : int32
+{
+	HE_Default = 0x0,
+	HE_Non = 0x1,
+	HE_Object = 0x2,
+	HE_CommonObject = 0x3,
+	HE_Particle = 0x4,
+};
+
+enum ATK_FRONT : int32
+{
+	AFR_SelfDir = 0x0,
+	AFR_PlyDir = 0x1,
+	AFR_SelfToEnemy = 0x2,
+	AFR_PlyToEnemy = 0x3,
+};
+
+enum KILL_TYPE : int32
+{
+	KT_Normal = 0x0,
+	KT_NotKill = 0x1,
+	KT_NotKillCombo = 0x2,
+	KT_Kill = 0x3,
+	KT_KillForMOMJibaku = 0x4,
+};
+
+enum FINISH_BG : int32
+{
+	FBG_Default = 0x0,
+	FBG_Normal = 0x1,
+	FBG_Ultimate = 0x2,
+	FBG_Ichigeki = 0x3,
+};
+
+enum HIT_POSITION_TYPE : int32
+{
+	HPT_Non = 0x0,
+	HPT_Rel = 0x1,
+	HPT_Abs = 0x2,
+	HPT_Add = 0x3,
+	HPT_RelNextFrame = 0x4,
+	HPT_AbsNextFrame = 0x5,
+	HPT_AddNextFrame = 0x6,
+};
+
+enum CO_TYPE : int32
+{
+	CO_NULL = 0x0,
+	CO_PREV = 0x1,
+	CO_PARENT = 0x2,
+	CO_PLAYER = 0x3,
+	CO_STACK0 = 0x4,
+	CO_STACK1 = 0x5,
+	CO_STACK2 = 0x6,
+	CO_STACK3 = 0x7,
+	CO_STACK4 = 0x8,
+	CO_STACK5 = 0x9,
+	CO_STACK6 = 0xA,
+	CO_STACK7 = 0xB,
+	CO_STACK_FOR_CMN_ACT = 0xC,
+	CO_WINNER = 0xD,
+	CO_LOSER = 0xE,
+	CO_____RSV2 = 0xF,
+	CO_____RSV3 = 0x10,
+	CO_____RSV4 = 0x11,
+	CO_____RSV5 = 0x12,
+	CO_____RSV6 = 0x13,
+	CO_____RSV7 = 0x14,
+	CO_LOCKED = 0x15,
+	CO_ENEMY = 0x16,
+	CO_SELF = 0x17,
+	CO_ATTACK_MASTER = 0x18,
+	CO_ATTACK_SLAVE = 0x19,
+	CO_TRIAL = 0x1A,
+	CO_PLAYER1 = 0x1B,
+	CO_PLAYER2 = 0x1C,
+	CO_SELF_MAIN_PLAYER = 0x1D,
+	CO_SELF_SUB_MEMBER1 = 0x1E,
+	CO_SELF_SUB_MEMBER2 = 0x1F,
+	CO_ENEMY_MAIN_PLAYER = 0x20,
+	CO_ENEMY_SUB_MEMBER1 = 0x21,
+	CO_ENEMY_SUB_MEMBER2 = 0x22,
+	CO_PREV_MAIN_PLAYER = 0x23,
+	CO_PREV_ENEMY_MAIN_PLAYER = 0x24,
+	CO_MAIN_PLAYER1 = 0x25,
+	CO_MAIN_PLAYER2 = 0x26,
+	CO_DAMAGE_EFFECT = 0x27,
+};
+
+enum ATKDAN : int32
+{
+	ATKDAN_Jodan = 0x0,
+	ATKDAN_Chudan = 0x1,
+	ATKDAN_Gedan = 0x2,
+	ATKDAN_Gahu = 0x3,
+};
+
+enum DMG_CELL : int32
+{
+	DMG_CELL_NOKEZORI_H_0 = 0x0,
+	DMG_CELL_NOKEZORI_H_1 = 0x1,
+	DMG_CELL_NOKEZORI_H_2 = 0x2,
+	DMG_CELL_NOKEZORI_H_3 = 0x3,
+	DMG_CELL_NOKEZORI_H_4 = 0x4,
+	DMG_CELL_NOKEZORI_H_5 = 0x5,
+	DMG_CELL_NOKEZORI_H_6 = 0x6,
+	DMG_CELL_NOKEZORI_L_0 = 0x7,
+	DMG_CELL_NOKEZORI_L_1 = 0x8,
+	DMG_CELL_NOKEZORI_L_2 = 0x9,
+	DMG_CELL_NOKEZORI_L_3 = 0xA,
+	DMG_CELL_NOKEZORI_L_4 = 0xB,
+	DMG_CELL_NOKEZORI_L_5 = 0xC,
+	DMG_CELL_NOKEZORI_L_6 = 0xD,
+	DMG_CELL_NOKEZORI_C_0 = 0xE,
+	DMG_CELL_NOKEZORI_C_1 = 0xF,
+	DMG_CELL_NOKEZORI_C_2 = 0x10,
+	DMG_CELL_NOKEZORI_C_3 = 0x11,
+	DMG_CELL_NOKEZORI_C_4 = 0x12,
+	DMG_CELL_NOKEZORI_C_5 = 0x13,
+	DMG_CELL_NOKEZORI_C_6 = 0x14,
+	DMG_CELL_HIGH_GUARD = 0x15,
+	DMG_CELL_MID_GUARD = 0x16,
+	DMG_CELL_AIR_GUARD = 0x17,
+	DMG_CELL_BACK_DOWN_FIRST = 0x18,
+	DMG_CELL_BACK_DOWN_FIRST2 = 0x19,
+	DMG_CELL_BACK_DOWN_FIRST3 = 0x1A,
+	DMG_CELL_BACK_DOWN_UPPER = 0x1B,
+	DMG_CELL_BACK_DOWN_UPPER_TO_TOP = 0x1C,
+	DMG_CELL_BACK_DOWN_TOP = 0x1D,
+	DMG_CELL_BACK_DOWN_DOWN = 0x1E,
+	DMG_CELL_BACK_DOWN_CRASH = 0x1F,
+	DMG_CELL_BACK_DOWN_CRASH_TOP = 0x20,
+	DMG_CELL_BACK_DOWN_SLEEP = 0x21,
+	DMG_CELL_VERT_DOWN_FIRST = 0x22,
+	DMG_CELL_VERT_DOWN_UPPER = 0x23,
+	DMG_CELL_VERT_DOWN_UPPER_TO_TOP = 0x24,
+	DMG_CELL_VERT_DOWN_TOP = 0x25,
+	DMG_CELL_VERT_DOWN_DOWN = 0x26,
+	DMG_CELL_VERT_DOWN_CRASH = 0x27,
+	DMG_CELL_VERT_DOWN_CRASH_TOP = 0x28,
+	DMG_CELL_VERT_DOWN_SLEEP = 0x29,
+	DMG_CELL_FRONT_DOWN_FIRST = 0x2A,
+	DMG_CELL_FRONT_DOWN_UPPER = 0x2B,
+	DMG_CELL_FRONT_DOWN_TOP = 0x2C,
+	DMG_CELL_FRONT_DOWN_DOWN = 0x2D,
+	DMG_CELL_HARITSUKI = 0x2E,
+	DMG_CELL_KANCHO_PRE = 0x2F,
+	DMG_CELL_KANCHO_HIT = 0x30,
+	DMG_CELL_INUGAMI = 0x31,
+	DMG_CELL_NOKEZORI_B_0 = 0x32,
+	DMG_CELL_NOKEZORI_B_1 = 0x33,
+	DMG_CELL_NOKEZORI_B_2 = 0x34,
+	DMG_CELL_NOKEZORI_B_3 = 0x35,
+	DMG_CELL_NOKEZORI_B_4 = 0x36,
+	DMG_CELL_NOKEZORI_B_5 = 0x37,
+	DMG_CELL_NOKEZORI_B_6 = 0x38,
+	DMG_CELL_NUM = 0x39,
+	DMG_CELL_NOT_USE = 0xFF,
+};
+
+enum EDT_TYPE : int32
+{
+	EDT_Default = 0x0,
+	EDT_HitStopToBackDown = 0x1,
+	EDT_HitStopToVertDown = 0x2,
+};
+
+enum POS_TYPE : int32
+{
+  POS_EX_POINT_0 = 0x0,
+  POS_EX_POINT_1 = 0x1,
+  POS_EX_POINT_2 = 0x2,
+  POS_EX_POINT_3 = 0x3,
+  POS_EX_POINT_4 = 0x4,
+  POS_EX_POINT_5 = 0x5,
+  POS_EX_POINT_6 = 0x6,
+  POS_EX_POINT_7 = 0x7,
+  POS_EX_POINT_8 = 0x8,
+  POS_EX_POINT_9 = 0x9,
+  POS_EX_POINT_10 = 0xA,
+  POS_EX_POINT_11 = 0xB,
+  POS_EX_POINT_12 = 0xC,
+  POS_EX_POINT_13 = 0xD,
+  POS_EX_POINT_14 = 0xE,
+  POS_EX_POINT_15 = 0xF,
+  POS_EX_POINT_16 = 0x10,
+  POS_EX_POINT_17 = 0x11,
+  POS_EX_POINT_18 = 0x12,
+  POS_EX_POINT_19 = 0x13,
+  POS_EX_POINT_20 = 0x14,
+  POS_EX_POINT_21 = 0x15,
+  POS_EX_POINT_22 = 0x16,
+  POS_EX_POINT_23 = 0x17,
+  POS_EX_POINT_24 = 0x18,
+  POS_EX_POINT_25 = 0x19,
+  POS_EX_POINT_26 = 0x1A,
+  POS_EX_POINT_27 = 0x1B,
+  POS_EX_POINT_28 = 0x1C,
+  POS_EX_POINT_29 = 0x1D,
+  POS_ZERO = 0x64,
+  POS_ATTACK = 0x65,
+  POS_DAMAGE = 0x66,
+  POS_CENTER = 0x67,
+  POS_CENTER_LAND = 0x68,
+  POS_BODY_RANDOM = 0x69,
+  POS_EX_RECT_RANDOM = 0x6A,
+  POS_AURA = 0x6B,
+  POS_PRIVATE_0 = 0x6C,
+  POS_PRIVATE_1 = 0x6D,
+  POS_PRIVATE_2 = 0x6E,
+  POS_PRIVATE_3 = 0x6F,
+  POS_PAST_HALF = 0x70,
+  POS_GTMP = 0x71,
+  POS_HEAD = 0x72,
+  POS_NECK = 0x73,
+  POS_ABDOMINAL = 0x74,
+  POS_R_LEG = 0x75,
+  POS_L_LEG = 0x76,
+  POS_HEART = 0x77,
+  POS_ENEMYS_LAND = 0x78,
+  POS_NOKEZORI = 0x79,
+  POS_ASHIMOTO_RANDOM = 0x7A,
+  POS_ZERO_LAND = 0x7B,
+  POS_FRONT_05_BODY = 0x7C,
+  POS_FRONT_1_BODY = 0x7D,
+  POS_FRONT_2_BODY = 0x7E,
+  POS_BACK_05_BODY = 0x7F,
+  POS_BACK_1_BODY = 0x80,
+  POS_BACK_2_BODY = 0x81,
+  POS_EX_POINT_F = 0x82,
+  POS_WORLD_ZERO = 0x83,
+  POS_ENEMYS_CENTER = 0x84,
+  POS_ENEMYS_BODY_RANDOM = 0x85,
+  POS_ENEMYS_EX_RECT_RANDOM = 0x86,
+  POS_ENEMYS_AURA = 0x87,
+  POS_ENEMYS_HEAD = 0x88,
+  POS_ENEMYS_NECK = 0x89,
+  POS_ENEMYS_ABDOMINAL = 0x8A,
+  POS_ENEMYS_R_LEG = 0x8B,
+  POS_ENEMYS_L_LEG = 0x8C,
+  POS_ENEMYS_HEART = 0x8D,
+  POS_ENEMYS_EX_POINT_F = 0x8E,
+  POS_EX_POINT_PG = 0x8F,
+  POS_BODY_RANDOM_3D = 0x90,
+  POS_EX_POINT_RANDOM = 0x91,
+  POS_BIKKURI = 0x92,
+  POS_CHEST_3D = 0x93,
+  POS_LEG_CENTER = 0x94,
+  POS_HEAD_3D = 0x95,
+  POS_PELVIS_3D = 0x96,
+  POS_BODY_RANDOM_3D_WITHOUT_HEAD = 0x97,
+  POS_SHOULDER_L_3D = 0x98,
+  POS_SHOULDER_R_3D = 0x99,
+  POS_ELBOW_L_3D = 0x9A,
+  POS_ELBOW_R_3D = 0x9B,
+  POS_HAND_L_3D = 0x9C,
+  POS_HAND_R_3D = 0x9D,
+  POS_CALF_L_3D = 0x9E,
+  POS_CALF_R_3D = 0x9F,
+  POS_FOOT_L_3D = 0xA0,
+  POS_FOOT_R_3D = 0xA1,
+  POS_AFRO_3D = 0xA2,
+  POS_FRONT_3_BODY = 0xA3,
+  POS_BACK_3_BODY = 0xA4,
+  POS_SCREEN_CENTER = 0xA5,
+};
+
+enum FACE_TYPE : int32
+{
+	FACE_NORMAL = 0x0,
+	FACE_LAUGH1 = 0x1,
+	FACE_LAUGH2 = 0x2,
+	FACE_GRIN1 = 0x3,
+	FACE_GRIN2 = 0x4,
+	FACE_ANGRY1 = 0x5,
+	FACE_ANGRY2 = 0x6,
+	FACE_SURPRISE1 = 0x7,
+	FACE_SURPRISE2 = 0x8,
+	FACE_SURPRISE3 = 0x9,
+	FACE_STUFFY1 = 0xA,
+	FACE_STUFFY2 = 0xB,
+	FACE_FEAR = 0xC,
+	FACE_SAD = 0xD,
+	FACE_DAMAGE = 0xE,
+	FACE_FAINT = 0xF,
+	FACE_TYPE_NUM = 0x10,
+};
+
+UENUM()
+enum ESoundBank : int32
+{
+	SND_BANK_BEGIN = 0x0,
+	BANK_ACT_BEGIN = 0x0,
+	BANK_ACT_0 = 0x0,
+	BANK_ACT_1 = 0x1,
+	BANK_ACT_2 = 0x2,
+	BANK_ACT_3 = 0x3,
+	BANK_ACT_4 = 0x4,
+	BANK_ACT_5 = 0x5,
+	BANK_ACT_6 = 0x6,
+	BANK_ACT_7 = 0x7,
+	BANK_ACT_8 = 0x8,
+	BANK_ACT_9 = 0x9,
+	BANK_ACT_10 = 0xA,
+	BANK_ACT_11 = 0xB,
+	BANK_ACT_12 = 0xC,
+	BANK_ACT_13 = 0xD,
+	BANK_ACT_14 = 0xE,
+	BANK_ACT_15 = 0xF,
+	BANK_ACT_LAST = 0xF,
+	BANK_ACT_NUM = 0x10,
+	BANK_PLY_BEGIN = 0x10,
+	BANK_PLY_0 = 0x10,
+	BANK_PLY_1 = 0x11,
+	BANK_PLY_2 = 0x12,
+	BANK_PLY_3 = 0x13,
+	BANK_PLY_4 = 0x14,
+	BANK_PLY_5 = 0x15,
+	BANK_PLY_6 = 0x16,
+	BANK_PLY_7 = 0x17,
+	BANK_PLY_8 = 0x18,
+	BANK_PLY_9 = 0x19,
+	BANK_PLY_10 = 0x1A,
+	BANK_PLY_11 = 0x1B,
+	BANK_PLY_12 = 0x1C,
+	BANK_PLY_13 = 0x1D,
+	BANK_PLY_14 = 0x1E,
+	BANK_PLY_15 = 0x1F,
+	BANK_PLY_LAST = 0x1F,
+	BANK_PLY_NUM = 0x10,
+	BANK_NATIVE_BEGIN = 0x20,
+	BANK_NATIVE_0 = 0x20,
+	BANK_NATIVE_1 = 0x21,
+	BANK_NATIVE_2 = 0x22,
+	BANK_NATIVE_3 = 0x23,
+	BANK_NATIVE_4 = 0x24,
+	BANK_NATIVE_5 = 0x25,
+	BANK_NATIVE_6 = 0x26,
+	BANK_NATIVE_7 = 0x27,
+	BANK_NATIVE_8 = 0x28,
+	BANK_NATIVE_9 = 0x29,
+	BANK_NATIVE_10 = 0x2A,
+	BANK_NATIVE_11 = 0x2B,
+	BANK_NATIVE_12 = 0x2C,
+	BANK_NATIVE_13 = 0x2D,
+	BANK_NATIVE_14 = 0x2E,
+	BANK_NATIVE_15 = 0x2F,
+	BANK_NATIVE_LAST = 0x2F,
+	BANK_NATIVE_NUM = 0x10,
+	SND_BANK_MAX = 0x30,
+	SND_BANK_INVALID = 0x31,
+};
+
+enum EDestructionFinish : int32
+{
+	DST_FINISH_BOMB = 0x0,
+	DST_FINISH_BEAM = 0x1,
+};
+
+enum EDestructionFinishEffect : int32
+{
+	DST_FINISH_EFFECT_01 = 0x0,
+	DST_FINISH_EFFECT_02 = 0x1,
+	DST_FINISH_EFFECT_03 = 0x2,
+};
+
+enum AtkEasyGuardReadyFlg : int32
+{
+	EASY_GUARD_NONE = 0x0,
+	EASY_GUARD_READY_OK = 0x1,
+	EASY_GUARD_READY_AIRONLY = 0x2,
+	EASY_GUARD_READY_INVALID = 0x3,
+};
+
+enum CHT_PROCESS : int32
+{
+	CHT_S = 0x0,
+	CHT_M = 0x1,
+	CHT_L = 0x2,
+	CHT_RISC = 0x3,
+};
+
+enum HIT_TYPE : int32
+{
+	HITTYPE_MISS = 0x0,
+	HITTYPE_DAMAGE = 0x1,
+	HITTYPE_GUARD = 0x2,
+	HITTYPE_DODGE = 0x3,
+	HITTYPE_ARMOR = 0x4,
+	HITTYPE_BOSSARMOR = 0x5,
+	HITTYPE_PARRY = 0x6,
+};
+
+enum SG_TYPE : int32
+{
+	SG_Dodge = 0x0,
+	SG_Armor = 0x1,
+	SG_Parry = 0x2,
+};
+
+enum VOICE_TYPE : int32
+{
+	VOICE_TYPE_NONE = 0x0,
+	VOICE_TYPE_DEFAULT = 0x1,
+	VOICE_TYPE_DAMAGE = 0x2,
+	VOICE_TYPE_ATTACK = 0x3,
+	VOICE_TYPE_GUARD = 0x4,
+};
+
+enum EXHOMING : int32
+{
+	EXHOMING_DistanceAccel = 0x0,
+	EXHOMING_FixAccel = 0x1,
+	EXHOMING_ToSpeed = 0x2,
+};
+
+enum ATKTGT : int32
+{
+	ATKTGT_Enemy = 0x0,
+	ATKTGT_Friend = 0x1,
+	ATKTGT_Any = 0x2,
+	ATKTGT_EnemyDmgAnyShot = 0x3,
+};
