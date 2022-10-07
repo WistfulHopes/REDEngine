@@ -13,6 +13,10 @@
 !/Config/**
 !/Plugins/**
 
+# However, do ignore plugin binaries and intermediate directories.
+/Plugins/**/Binaries
+/Plugins/**/Intermediate
+
 # Only allow .uasset and .umap files from /Content dir.
 # They're tracked by git-lfs, don't forget to track other
 # files if adding them here.
