@@ -16,8 +16,8 @@ class REDENGINE_API UMaterialInstancePool : public UObject
 	bool bInitialized;
 public:
 	UPROPERTY()
-	TArray<UMaterialInstanceDynamic*>                 MaterialInstancePool;
+	TArray<UMaterialInstanceDynamic*> MaterialInstancePool;
 private:
 	UPROPERTY()
-	TArray<UMaterialInstanceDynamic*>                 FreeMaterialInstanceList;
+	TArray<UMaterialInstanceDynamic*> FreeMaterialInstanceList;
 };

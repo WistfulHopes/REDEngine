@@ -3,13 +3,18 @@
 #include "DataTypes/AA_Filepack_FPAC.h"
 #include "DataTypes/AA_Flag.h"
 #include "COperand.h"
+#include "DataTypes/AA_Handle.h"
 #include "DataTypes/C256BYTE.h"
 #include "DataTypes/CCreateArg.h"
 #include "DataTypes/CFloatWithTimer.h"
 #include "DataTypes/CVectorWithTimer.h"
 #include "DataTypes/CXXBYTE.h"
 #include "DataTypes/Enums.h"
+#include "DataTypes/StatisticsCheckSkillData.h"
+#include "DataTypes/TBlendParam.h"
 
+class AREDDestructionShotObject;
+class AREDPawn;
 class CBBSFileAnalyzeData;
 class OBJ_CBase;
 
@@ -327,9 +332,179 @@ struct sSoundReq
 	int m_Priority;
 };
 
+struct FBoneControlParam
+{
+	int LastX;
+	int LastY;
+	int LastZ;
+	int CurrentX;
+	int CurrentY;
+	int CurrentZ;
+};
+
+struct __declspec(align(4)) FBoneControlUnit
+{
+	int UpdateInterval;
+	int UpdateIntervalCount;
+	int CurrentFrame;
+	int EndFrame;
+	EBoneControl_Interp InterpType;
+	FBoneControlParam ControlParam;
+	bool bSetParams;
+};
+
+struct __declspec(align(4)) FBoneController
+{	
+	enum ETargetBone : __int32
+	{
+		TargetBone_Head = 0x0,
+		TargetBone_Clavicle_L = 0x1,
+		TargetBone_Clavicle_R = 0x2,
+		TargetBone_UpArm_L = 0x3,
+		TargetBone_UpArm_R = 0x4,
+		TargetBone_LowArm_L = 0x5,
+		TargetBone_LowArm_R = 0x6,
+		TargetBone_Hand_L = 0x7,
+		TargetBone_Hand_R = 0x8,
+		TargetBone_Chest = 0x9,
+		TargetBone_Ex0 = 0xA,
+		TargetBone_Ex1 = 0xB,
+		TargetBone_Ex2 = 0xC,
+		TargetBone_Ex3 = 0xD,
+		TargetBone_Ex4 = 0xE,
+		TargetBone_Max = 0xF,
+	  };
+
+	enum EParamType : __int32
+	{
+		ParamType_Position = 0x0,
+		ParamType_Rotation = 0x1,
+		ParamType_Scale = 0x2,
+		ParamType_Max = 0x3,
+	  };
+
+	struct FBoneControlCommand
+	{
+		int DelayCount;
+		ETargetBone TargetBone;
+		EParamType TargetType;
+		int Frames;
+		int UpdateInterval;
+		int ParamX;
+		int ParamY;
+		int ParamZ;
+		EBoneControl_Interp InterpType;
+	};
+
+	FBoneControlCommand BoneControlQue[16];
+	FBoneControlUnit BoneControlUnit[45];
+	bool bEnableBoneControl;
+	bool bTriggerOnCellBegin;
+	bool bIgnoreObjStop;
+	bool bForceUpdateSkeleton;
+	bool bResetOnActionChange;
+};
+
 class OBJ_CBase
 {
 public:
+	struct SCellBlendParam
+	{
+		bool bActive;
+		CXXBYTE<32> CellName;
+		TBlendParam<float> BlendParam;
+	};
+
+	/* 322487 */
+	struct SCellSlowParam
+	{
+		bool bActive;
+		int Interval;
+		int Frame1;
+		int Frame2;
+		float Blend1;
+		float Blend2;
+	};
+
+	struct SCellSlow
+	{
+		bool bOverride;
+		SCellSlowParam Param;
+		SCellSlowParam ParamFinishStop;
+		int Counter;
+		float WorldStopAdvanceRate;
+		int DrawOffsetX;
+		int DrawOffsetY;
+		float MoveRate;
+		float MaxMoveRate;
+	};
+
+	struct SExBlendParam
+	{
+		bool bActive;
+		CXXBYTE<32> CellName;
+	};
+
+	struct FInterruptStack
+	{
+		ON_XXXX_INTRPT Interrupts[8];
+		int StackCount;
+	};
+
+	struct SDispWithoutMove
+	{
+		bool bActive;
+		int OffsetPosX;
+		int ApplyRate;
+		bool bInit;
+		int BasePosX;
+	};
+	
+	struct SRollbackVoiceParam
+	{
+		CXXBYTE<32> VoiceCueName;
+		int VoiceDuration;
+		int VoiceRemainCount;
+	};
+
+	struct SRollbackData
+	{
+		CXXBYTE<32> LinkParticleName;
+		CO_TYPE LinkParticleObjType;
+		bool LinkParticleUseArg;
+		CCreateArg LinkParticleCreateArg;
+		bool bLinkParticleSet;
+		unsigned int LinkParticleStartFrame;
+		CXXBYTE<32> LinkParticleActName;
+		unsigned int PointLightId;
+		CXXBYTE<32> LinkPawnName;
+		bool LinkPawnSet;
+		bool LinkCommonPawn;
+		bool LinkCommonPawnEffect;
+		bool LinkCommonPawnSelf;
+		bool LinkPawnPlayingCutSceneAnime;
+		unsigned int LinkPawnStartFrame;
+		CXXBYTE<32> LinkPawnActName;
+		CXXBYTE<32> MeshSetName;
+		CXXBYTE<32> MaterialSetName;
+		CXXBYTE<32> PlayAnimeName;
+		int PlayAnimeStartFrame;
+		bool bPlayAnimeSet;
+		float PlayAnimeCurrentTime;
+		int PlayAnimCutSceneStepFramePawn;
+		int PlayAnimCutSceneStepFrameAnimInst;
+		CXXBYTE<32> AttachPawnMeshName;
+		CXXBYTE<32> AttachPawnSocketName;
+		bool bAttachPawnSet;
+		SRollbackVoiceParam VoiceParams[8];
+	};
+
+	struct SRollbackMeshControl
+	{
+		bool bSetForceDispFlag;
+		bool bForceDispFlag;
+	};
+
 	int ObjBaseSyncBegin;
 	unsigned int m_AtkPriority;
 	ACTV_STATE m_ActiveState;
@@ -615,7 +790,7 @@ public:
 	int m_EyeBlinkCounter;
 	C256BYTE m_MouthString;
 	int m_MouthStringIndex;
-	unsigned __int8 m_MouthChar;
+	uint8 m_MouthChar;
 	int m_MouthCharTime;
 	int m_MouthPauseTime;
 	int m_MouthVoiceTime;
@@ -702,11 +877,80 @@ public:
 	bool m_bMaterialValResetOnActionChange[29];
 	CXXBYTE<32> m_MaterialSetOnPlayAnime;
 	bool m_bLinkMaterialParticle;
-	unsigned __int16 m_MotionBlurAmount;
+	uint16 m_MotionBlurAmount;
 	int m_FaceBrowIndex;
 	int m_FaceEyeIndex;
 	int m_FaceMouthIndex;
 	CXXBYTE<32> m_HairMotionName;
 	CXXBYTE<32> m_SignalName;
 	int m_SignalName_Param;
+	AREDPawn *m_pPawn;
+	CXXBYTE<32> m_PawnName;
+	UParticleSystemComponent *m_pLinkPSC;
+	CXXBYTE<32> m_LinkPSCSocketName;
+	bool m_LinkPSCSocketRot;
+	OBJ_CBaseRelativePtr m_pLinkObject_PSCSocket;
+	AREDDestructionShotObject *m_pLinkDestructionActor;
+	bool m_AttachPawnToSocket;
+	long double m_BaseLocalTime;
+	__int16 m_AtkForBGEffectDoneCount;
+	int m_BGFadeSpeed;
+	int m_BGFadeAlpha;
+	bool m_EnableForceEffectX;
+	bool m_EnableForceMoveX;
+	bool m_EnableForceEffectY;
+	bool m_EnableForceMoveY;
+	int m_InnerForceEffectRate;
+	int m_OuterForceEffectRate;
+	int m_ReceiveForceX;
+	int m_ReceiveForceY;
+	bool m_bFaceBrowChanged;
+	bool m_bFaceEyeChanged;
+	bool m_bFaceMouthChanged;
+	int m_LastChangeFace;
+	bool m_bHairChanged;
+	bool m_bLinkPause_PSC;
+	bool m_DispModel;
+	bool m_DispModelByOther;
+	FBoneController m_BoneCtrl;
+	bool m_StepAnimeMode;
+	bool m_AutoResetAnimeMode;
+	bool m_bOverwriteLightDir;
+	int m_OverwriteLightDirX;
+	int m_OverwriteLightDirY;
+	float m_DepthDarken;
+	POS_TYPE m_SocketPosType;
+	bool m_bUpdateSocketPos;
+	int m_PlayAnimeFaceIndex;
+	bool m_CameraOption_UpdateOrthoBlend;
+	ON_XXXX_INTRPT m_NaguruSignal;  int m_L;
+	int m_R;
+	int m_T;
+	int m_B;
+	int m_XForCalc;
+	int m_YForCalc;
+	SCellBlendParam m_CellBlendParam;
+	SCellSlow m_CellSlow;
+	SCellSlowParam m_CellSlowDefaultParam;
+	SExBlendParam m_ExBlendParam[4];
+	int m_LinkExBlendIndex;
+	ON_XXXX_INTRPT m_ExecutionInterrupt;
+	FInterruptStack m_InterruptStack;
+	unsigned int m_ScriptFlag;
+	uint8 *m_ScriptGotoAddr;
+	uint8 *m_GotoForLoopAddr;
+	int m_GotoTimes;
+	SDispWithoutMove m_DispWithoutMove;
+	bool m_ResetOverwriteLinkBoneOnActionChange;
+	SRollbackData m_RollbackData;
+	bool m_bPlayAnimForRollback;
+	float m_LinkParticleStartTime;
+	int m_LinkParticleActiveFrame;
+	SRollbackMeshControl m_RollbackMeshControl[50];
+	int m_RollbackMeshControlNum;
+	int ObjBaseSyncEnd;
+	bool bLinkPSCWasDeleted;
+	AA_Handle m_hResource;
+	CXXBYTE<32> m_StatisticsActionName;
+	StatisticsCheckSkillData m_StatisticsCheckSkill[108];
 };

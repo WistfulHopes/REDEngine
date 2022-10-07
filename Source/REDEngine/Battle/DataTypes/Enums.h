@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 UENUM()
-enum SIDE_ID : int32
+enum SIDE_ID
 {
 	SIDE_BEGIN = 0x0,
 	SIDE_1P = 0x0,
@@ -13,7 +13,7 @@ enum SIDE_ID : int32
 };
 
 UENUM()
-enum ECharaID : int32
+enum ECharaID
 {
 	CHARA_ID_SOL = 0x0,
 	CHARA_ID_KYK = 0x1,
@@ -47,31 +47,31 @@ enum ECharaID : int32
 	CHARA_ID_741 = 0x1D,
 	CHARA_ID_852 = 0x1E,
 	CHARA_ID_DMY = 0x1F,
-	CHARA_ID_MAX = 0x20,
+	CHARA_ID_MAX = 0x20 UMETA(Hidden),
 };
 
 UENUM()
-enum EMemberID : int32
+enum EMemberID
 {
 	MemberID_Begin = 0x0,
 	MemberID_01 = 0x0,
 	MemberID_02 = 0x1,
 	MemberID_03 = 0x2,
-	MemberID_MAX = 0x3,
+	MemberID_MAX = 0x3 UMETA(Hidden),
 	MemberID_INVALID = 0x4,
 };
 
 UENUM()
-enum EBattleScript : int32
+enum EBattleScript
 {
 	BATTLE_SCRIPT_DEFAULT = 0x0,
 	BATTLE_SCRIPT_BLACK = 0x1,
 	BATTLE_SCRIPT_BOSS = 0x2,
 	BATTLE_SCRIPT_EXBOSS = 0x3,
-	BATTLE_SCRIPT_MAX = 0x4,
+	BATTLE_SCRIPT_MAX = 0x4 UMETA(Hidden),
 };
 
-enum BG_TYPE : int32
+enum BG_TYPE
 {
 	BG_Normal = 0x0,
 	BG_Ultimate = 0x1,
@@ -80,7 +80,7 @@ enum BG_TYPE : int32
 	BG_SimpleBlackOut = 0x2,
 };
 
-enum ZLINE : int32
+enum ZLINE
 {
 	ZLINE_FAR = 0x0,
 	ZLINE_MIDDLE = 0x1,
@@ -99,7 +99,7 @@ enum ZLINE_LEVEL : __int32
 	ZLL_LVMAX = 0x5,
 };
 
-enum ACTV_STATE : int32
+enum ACTV_STATE
 {
 	ACTV_NOT_ACTIVE = 0x0,
 	ACTV_ACTIVE = 0x1,
@@ -111,7 +111,7 @@ enum ACTV_STATE : int32
 	ACTV_WAITING_2 = 0x6,
 };
 
-enum RS_RENDER_STAGE : int32
+enum RS_RENDER_STAGE
 {
 	RS_Default = 0x0,
 	RS_Front = 0x1,
@@ -196,14 +196,14 @@ enum SKILL_CATEGORY : int
 	SCA_NUM = 0x3C,
 };
 
-enum CHT_TYPE : int32
+enum CHT_TYPE
 {
 	CHT_Default = 0x0,
 	CHT_Non = 0x1,
 	CHT_Force = 0x2,
 };
 
-enum HIT_EFFECT : int32
+enum HIT_EFFECT
 {
 	HE_Default = 0x0,
 	HE_Non = 0x1,
@@ -212,7 +212,7 @@ enum HIT_EFFECT : int32
 	HE_Particle = 0x4,
 };
 
-enum ATK_FRONT : int32
+enum ATK_FRONT
 {
 	AFR_SelfDir = 0x0,
 	AFR_PlyDir = 0x1,
@@ -220,7 +220,7 @@ enum ATK_FRONT : int32
 	AFR_PlyToEnemy = 0x3,
 };
 
-enum KILL_TYPE : int32
+enum KILL_TYPE
 {
 	KT_Normal = 0x0,
 	KT_NotKill = 0x1,
@@ -229,7 +229,7 @@ enum KILL_TYPE : int32
 	KT_KillForMOMJibaku = 0x4,
 };
 
-enum FINISH_BG : int32
+enum FINISH_BG
 {
 	FBG_Default = 0x0,
 	FBG_Normal = 0x1,
@@ -237,7 +237,7 @@ enum FINISH_BG : int32
 	FBG_Ichigeki = 0x3,
 };
 
-enum HIT_POSITION_TYPE : int32
+enum HIT_POSITION_TYPE
 {
 	HPT_Non = 0x0,
 	HPT_Rel = 0x1,
@@ -248,7 +248,7 @@ enum HIT_POSITION_TYPE : int32
 	HPT_AddNextFrame = 0x6,
 };
 
-enum CO_TYPE : int32
+enum CO_TYPE
 {
 	CO_NULL = 0x0,
 	CO_PREV = 0x1,
@@ -292,7 +292,7 @@ enum CO_TYPE : int32
 	CO_DAMAGE_EFFECT = 0x27,
 };
 
-enum ATKDAN : int32
+enum ATKDAN
 {
 	ATKDAN_Jodan = 0x0,
 	ATKDAN_Chudan = 0x1,
@@ -300,7 +300,7 @@ enum ATKDAN : int32
 	ATKDAN_Gahu = 0x3,
 };
 
-enum DMG_CELL : int32
+enum DMG_CELL
 {
 	DMG_CELL_NOKEZORI_H_0 = 0x0,
 	DMG_CELL_NOKEZORI_H_1 = 0x1,
@@ -363,14 +363,14 @@ enum DMG_CELL : int32
 	DMG_CELL_NOT_USE = 0xFF,
 };
 
-enum EDT_TYPE : int32
+enum EDT_TYPE
 {
 	EDT_Default = 0x0,
 	EDT_HitStopToBackDown = 0x1,
 	EDT_HitStopToVertDown = 0x2,
 };
 
-enum POS_TYPE : int32
+enum POS_TYPE
 {
   POS_EX_POINT_0 = 0x0,
   POS_EX_POINT_1 = 0x1,
@@ -470,7 +470,7 @@ enum POS_TYPE : int32
   POS_SCREEN_CENTER = 0xA5,
 };
 
-enum FACE_TYPE : int32
+enum FACE_TYPE
 {
 	FACE_NORMAL = 0x0,
 	FACE_LAUGH1 = 0x1,
@@ -492,7 +492,7 @@ enum FACE_TYPE : int32
 };
 
 UENUM()
-enum ESoundBank : int32
+enum ESoundBank
 {
 	SND_BANK_BEGIN = 0x0,
 	BANK_ACT_BEGIN = 0x0,
@@ -556,20 +556,20 @@ enum ESoundBank : int32
 	SND_BANK_INVALID = 0x31,
 };
 
-enum EDestructionFinish : int32
+enum EDestructionFinish
 {
 	DST_FINISH_BOMB = 0x0,
 	DST_FINISH_BEAM = 0x1,
 };
 
-enum EDestructionFinishEffect : int32
+enum EDestructionFinishEffect
 {
 	DST_FINISH_EFFECT_01 = 0x0,
 	DST_FINISH_EFFECT_02 = 0x1,
 	DST_FINISH_EFFECT_03 = 0x2,
 };
 
-enum AtkEasyGuardReadyFlg : int32
+enum AtkEasyGuardReadyFlg
 {
 	EASY_GUARD_NONE = 0x0,
 	EASY_GUARD_READY_OK = 0x1,
@@ -577,7 +577,7 @@ enum AtkEasyGuardReadyFlg : int32
 	EASY_GUARD_READY_INVALID = 0x3,
 };
 
-enum CHT_PROCESS : int32
+enum CHT_PROCESS
 {
 	CHT_S = 0x0,
 	CHT_M = 0x1,
@@ -585,7 +585,7 @@ enum CHT_PROCESS : int32
 	CHT_RISC = 0x3,
 };
 
-enum HIT_TYPE : int32
+enum HIT_TYPE
 {
 	HITTYPE_MISS = 0x0,
 	HITTYPE_DAMAGE = 0x1,
@@ -596,14 +596,14 @@ enum HIT_TYPE : int32
 	HITTYPE_PARRY = 0x6,
 };
 
-enum SG_TYPE : int32
+enum SG_TYPE
 {
 	SG_Dodge = 0x0,
 	SG_Armor = 0x1,
 	SG_Parry = 0x2,
 };
 
-enum VOICE_TYPE : int32
+enum VOICE_TYPE
 {
 	VOICE_TYPE_NONE = 0x0,
 	VOICE_TYPE_DEFAULT = 0x1,
@@ -612,17 +612,252 @@ enum VOICE_TYPE : int32
 	VOICE_TYPE_GUARD = 0x4,
 };
 
-enum EXHOMING : int32
+enum EXHOMING
 {
 	EXHOMING_DistanceAccel = 0x0,
 	EXHOMING_FixAccel = 0x1,
 	EXHOMING_ToSpeed = 0x2,
 };
 
-enum ATKTGT : int32
+enum ATKTGT
 {
 	ATKTGT_Enemy = 0x0,
 	ATKTGT_Friend = 0x1,
 	ATKTGT_Any = 0x2,
 	ATKTGT_EnemyDmgAnyShot = 0x3,
+};
+
+UENUM(BlueprintType)
+enum EColorID {
+	COLOR_ID_01,
+	COLOR_ID_02,
+	COLOR_ID_03,
+	COLOR_ID_04,
+	COLOR_ID_05,
+	COLOR_ID_06,
+	COLOR_ID_07,
+	COLOR_ID_08,
+	COLOR_ID_09,
+	COLOR_ID_10,
+	COLOR_ID_11,
+	COLOR_ID_12,
+	COLOR_ID_13,
+	COLOR_ID_14,
+	COLOR_ID_15,
+	COLOR_ID_16,
+	COLOR_ID_17,
+	COLOR_ID_18,
+	COLOR_ID_19,
+	COLOR_ID_20,
+	COLOR_ID_21,
+	COLOR_ID_22,
+	COLOR_ID_23,
+	COLOR_ID_24,
+	COLOR_ID_25,
+	COLOR_ID_26,
+	COLOR_ID_27,
+	COLOR_ID_28,
+	COLOR_ID_29,
+	COLOR_ID_30,
+	COLOR_ID_31,
+	COLOR_ID_32,
+	COLOR_ID_33,
+	COLOR_ID_34,
+	COLOR_ID_35,
+	COLOR_ID_36,
+	COLOR_ID_37,
+	COLOR_ID_38,
+	COLOR_ID_39,
+	COLOR_ID_40,
+	COLOR_ID_41,
+	COLOR_ID_42,
+	COLOR_ID_43,
+	COLOR_ID_44,
+	COLOR_ID_45,
+	COLOR_ID_46,
+	COLOR_ID_47,
+	COLOR_ID_48,
+	COLOR_ID_49,
+	COLOR_ID_50,
+	COLOR_ID_51,
+	COLOR_ID_52,
+	COLOR_ID_53,
+	COLOR_ID_54,
+	COLOR_ID_55,
+	COLOR_ID_56,
+	COLOR_ID_57,
+	COLOR_ID_58,
+	COLOR_ID_59,
+	COLOR_ID_60,
+	COLOR_ID_61,
+	COLOR_ID_62,
+	COLOR_ID_63,
+	COLOR_ID_64,
+	COLOR_ID_65,
+	COLOR_ID_66,
+	COLOR_ID_67,
+	COLOR_ID_68,
+	COLOR_ID_69,
+	COLOR_ID_70,
+	COLOR_ID_71,
+	COLOR_ID_72,
+	COLOR_ID_73,
+	COLOR_ID_74,
+	COLOR_ID_75,
+	COLOR_ID_76,
+	COLOR_ID_77,
+	COLOR_ID_78,
+	COLOR_ID_79,
+	COLOR_ID_80,
+	COLOR_ID_81,
+	COLOR_ID_82,
+	COLOR_ID_83,
+	COLOR_ID_84,
+	COLOR_ID_85,
+	COLOR_ID_86,
+	COLOR_ID_87,
+	COLOR_ID_88,
+	COLOR_ID_89,
+	COLOR_ID_90,
+	COLOR_ID_91,
+	COLOR_ID_92,
+	COLOR_ID_93,
+	COLOR_ID_94,
+	COLOR_ID_95,
+	COLOR_ID_96,
+	COLOR_ID_97,
+	COLOR_ID_98,
+	COLOR_ID_99,
+	COLOR_ID_MAX UMETA(Hidden),
+};
+
+enum EMeshDir
+{
+	DIR_Right = 0x0,
+	DIR_Left = 0x1,
+};
+
+enum EMeshDirMode
+{
+	DIRMODE_Auto = 0x0,
+	DIRMODE_ForceRight = 0x1,
+	DIRMODE_ForceLeft = 0x2,
+	DIRMODE_MAX = 0x3,
+};
+
+enum EBoneControl_Interp
+{
+	BoneControl_Linear = 0x0,
+	BoneControl_EaseIn = 0x1,
+	BoneControl_EaseOut = 0x2,
+	BoneControl_EaseInOut = 0x3,
+};
+
+enum ON_XXXX_INTRPT
+{
+  ON_INITIALIZE = 0x0,
+  ON_FINALIZE = 0x1,
+  ON_LANDING = 0x2,
+  ON_IDLING = 0x3,
+  ON_YSPEED_DOWN = 0x4,
+  ON_LANDING_INFINITY = 0x5,
+  ON_SCREEN_COLLISION = 0x6,
+  ON_ACTION_END = 0x7,
+  ON_ATTACK_COLLISION = 0x8,
+  ON_ATTACK_COLLISION_PLAYER = 0x9,
+  ON_ATTACK_HIT_PLAYER_DAMAGE = 0xA,
+  ON_DAMAGE = 0xB,
+  ON_NO_STOP_IDLING = 0xC,
+  ON_TIMER = 0xD,
+  ON_DIE = 0xE,
+  ON_A_HOLD_OFF = 0xF,
+  ON_B_HOLD_OFF = 0x10,
+  ON_C_HOLD_OFF = 0x11,
+  ON_D_HOLD_OFF = 0x12,
+  ON_E_HOLD_OFF = 0x13,
+  ON_NEAR_PARENT_PLAYER = 0x14,
+  ON_DELETE = 0x15,
+  ON_DRAW = 0x16,
+  ON_SIGNAL0 = 0x17,
+  ON_SIGNAL1 = 0x18,
+  ON_SIGNAL2 = 0x19,
+  ON_SIGNAL3 = 0x1A,
+  ON_SIGNAL4 = 0x1B,
+  ON_SIGNAL5 = 0x1C,
+  ON_SIGNAL6 = 0x1D,
+  ON_SIGNAL7 = 0x1E,
+  ON_SIGNAL8 = 0x1F,
+  ON_SIGNAL9 = 0x20,
+  ON_MUTEKI = 0x21,
+  ON_SIGNAL_EX = 0x22,
+  ON_PLAYER_DAMAGE = 0x23,
+  ON_FRAME_STEP = 0x24,
+  ON_SHOT_SOUSAI_REACTION = 0x25,
+  ON_PLAYER_GUARD = 0x26,
+  ON_PRE_DRAW = 0x27,
+  ON_GUARD = 0x28,
+  ON_ARMOR = 0x29,
+  ON_PRE_FRAME_STEP = 0x2A,
+  ON_MUTEKI_PRE_HITSTOP = 0x2B,
+  ON_SIGNAL_NULL = 0x2C,
+  ON_KOWARE = 0x2D,
+  ON_WALL = 0x2E,
+  ON_PLAYER_ACTION_CHANGE = 0x2F,
+  ON_ENTRY_NEXT = 0x30,
+  ON_SIGNAL_NAME = 0x31,
+  ON_WORLD_STOP = 0x32,
+  ON_LANDING_NEXT_FRAME = 0x33,
+  ON_ATTACK_HIT_PLAYER_DAMAGE_LAND_HIT = 0x34,
+  ON_DEMO_END = 0x35,
+  ON_ATTACK_HIT_PRE_CONTROL = 0x36,
+  ON_ATTACK_HIT_PRE_CONTROL_FOR_FRIEND_HIT = 0x37,
+  ON_FRAME_STEP_AFTER = 0x38,
+  ON_ICHIGEKI_HIT_SELF = 0x39,
+  ON_ICHIGEKI_HIT_ENEMY = 0x3A,
+  ON_ICHIGEKI_HIT_ANY = 0x3B,
+  ON_ATTACK_HIT_PLAYER_DAMAGE_OR_ARMOR = 0x3C,
+  ON_FAULTLESS_DEFENCE_SARETA = 0x3D,
+  ON_ATTACK_HIT_PLAYER_DAMAGE_LAND_HIT_PRIVATE = 0x3E,
+  ON_ENTRY_CHANGE = 0x3F,
+  ON_MUTEKI_PRE_HITSTOP_FOR_TOBIDOUGU = 0x40,
+  ON_REFLACT = 0x41,
+  ON_REFLACTED = 0x42,
+  ON_PRE_HIT_COLLISION = 0x43,
+  ON_KOWARE_ASSARI_EX_COUNT_DOWN = 0x44,
+  ON_DAMAGE_2 = 0x45,
+  ON_TRIAL_TENTOU = 0x46,
+  ON_PLAYER_DAMAGE_AFTER_FIX_PARAM = 0x47,
+  ON_PLAYER_GUARD_AFTER_FIX_PARAM = 0x48,
+  ON_ENEMY_DAMAGE_AFTER_FIX_PARAM = 0x49,
+  ON_ENEMY_GUARD_AFTER_FIX_PARAM = 0x4A,
+  ON_TRIAL_BEGIN = 0x4B,
+  ON_ATTACKED_AFTER = 0x4C,
+  ON_FRAME_STEP_AFTER_EX = 0x4D,
+  ON_ATTACK_HIT_PLAYER_DAMAGE_PRE_CTRL = 0x4E,
+  ON_FORCE_X = 0x4F,
+  ON_FORCE_Y = 0x50,
+  ON_FORCE_LEFT = 0x51,
+  ON_FORCE_RIGHT = 0x52,
+  ON_FORCE_UP = 0x53,
+  ON_FORCE_DOWN = 0x54,
+  ON_MAIN_PLAYER_DAMAGE = 0x55,
+  ON_ATTACK_HIT_PLAYER_GUARD = 0x56,
+  ON_Z_REVERSAL = 0x57,
+  ON_RUSH_SOUSAI_PRIMARY = 0x58,
+  ON_ATTACK_HIT_MAIN_PLAYER_DAMAGE_PRE_CTRL = 0x59,
+  ON_ATTACK_HIT_MAIN_PLAYER_DAMAGE = 0x5A,
+  ON_ATTACK_HIT_MAIN_PLAYER_DAMAGE_AFTER_FIX_PARAM = 0x5B,
+  ON_ATTACK_COLLISION_MAIN_PLAYER = 0x5C,
+  ON_ATTACK_COLLISION_SOUSAI = 0x5D,
+  ON_ATTACK_COLLISION_MAIN_INTERRUPT_ENEMYSUB = 0x5E,
+  ON_PLAYER_AFTER_EXECUTE_DAMAGE = 0x5F,
+  ON_SOUSAI_HOMING_DASH = 0x60,
+  ON_SHOT_HIT_Z_REVERSAL_ACT = 0x61,
+  ON_ATTACK_HIT_PLAYER_ARMOR = 0x62,
+  ON_WORLDSIDE_BREAK = 0x63,
+  ON_ATTACK_HIT_PLAYER_DAMAGE_COUNTER = 0x64,
+  ON_ATTACK_HIT_PLAYER_PARRY = 0x65,
+  ON_NAGURU = 0x66,
+  ON_BG_CLASH_EVENT = 0x67,
+  ON_XXXX_NUM = 0x68,
 };
