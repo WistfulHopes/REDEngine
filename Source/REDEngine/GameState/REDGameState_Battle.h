@@ -45,6 +45,7 @@ public:
 	bool bAllocateInstances;
 
 	virtual void HandleMatchIsWaitingToStart() override;
+	virtual void HandleMatchHasStarted() override;
 	virtual void Tick(float DeltaSeconds) override;
 	void UpdateBattle(float DeltaSeconds);
 	void UpdateBattleSub(float DeltaSeconds, bool bUpdateDraw);

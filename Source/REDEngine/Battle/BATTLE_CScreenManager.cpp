@@ -3,7 +3,6 @@
 #include "AASystemRED.h"
 #include "Constants.h"
 #include "OBJ_CCharBase.h"
-#include "Framework/Docking/LayoutExtender.h"
 #include "REDEngine/GameState/REDGameState_Battle.h"
 #include "REDEngine/red/btl.h"
 
@@ -11,8 +10,8 @@ bool BATTLE_ScreenCameraControl::Update()
 {
   AREDGameState_Battle* GameState = Cast<AREDGameState_Battle>(GWorld->GetGameState());
   BATTLE_CScreenManager* ScreenManager = GameState->ScreenManager.Get();
-  float X = 0;
-  float Y = 0;
+  float X;
+  float Y;
   float Z = ScreenManager->m_ScreenWorldWidth * 0.00078125;
   if (m_Hold)
   {
@@ -72,12 +71,12 @@ bool BATTLE_ScreenCameraControl::Update()
   }
   float p_Y = m_Param.Y;
   int v22 = Y < v28 + 1;
-  int v23 = 0;
+  int V23;
   if (Y > v22)
   {
     if (Y < p_Y)
     {
-      v23 = p_Y = Y;
+      V23 = p_Y = Y;
       m_Vel.Y = 0;
     }
     else
@@ -85,13 +84,13 @@ bool BATTLE_ScreenCameraControl::Update()
       v22 = Y < v28 + 1;
       if (v22 && Y > p_Y)
       {
-        v23 = p_Y = Y;
+        p_Y = Y;
         m_Vel.Y = 0;
       }
-      v23 = p_Y;
+      V23 = p_Y;
       if (Y == p_Y || m_FixY)
       {
-        v23 = p_Y = Y;
+        V23 = p_Y = Y;
         m_Vel.Y = 0;
       }
     }
@@ -100,23 +99,22 @@ bool BATTLE_ScreenCameraControl::Update()
   {
     if (v22 && Y > p_Y)
     {
-      v23 = p_Y = Y;
+      p_Y = Y;
       m_Vel.Y = 0;
     }
-    v23 = p_Y;
+    V23 = p_Y;
     if (Y == p_Y || m_FixY)
     {
-      v23 = p_Y = Y;
+      V23 = p_Y = Y;
       m_Vel.Y = 0;
     }
   }
   int v25;
   int v26;
   float p_Z = m_Param.Z;
-  if ( Z > v29 && Z < p_Z || (v25 = v23, Z < v29) && Z > p_Z || (v26 = p_Z, Z == p_Z) || m_FixZ )
+  if ( Z > v29 && Z < p_Z || (v25 = V23, Z < v29) && Z > p_Z || (v26 = p_Z, Z == p_Z) || m_FixZ )
   {
-    p_Z = Z;
-    v25 = v23;
+    v25 = V23;
     m_Vel.Z = 0.0;
     v26 = Z;
   }
@@ -148,7 +146,7 @@ BATTLE_CScreenManager::BATTLE_CScreenManager()
   m_ScreenCameraControl.m_Param.Y = 0.0;
   m_ScreenCameraControl.m_Param.Z = 1;
   m_ScreenCameraControl.m_Vel.Y = 0;
-  m_ScreenCameraControl.m_Hold = 10;
+  m_ScreenCameraControl.m_Hold = true;
   m_ScreenCameraControl.m_FixZ = 1;
   m_ScreenCameraControl.m_Level = 1;
   m_ScreenCameraControl.m_Friction = 1;
@@ -220,6 +218,39 @@ BATTLE_CScreenManager::BATTLE_CScreenManager()
   m_PrevCameraMatrix.M[3][0] = 0;
   m_PrevCameraMatrix.M[3][2] = 0.0;
   m_PrevCameraMatrix.M[3][3] = 1.0;
+}
+
+void BATTLE_CScreenManager::ResetCameraManager()
+{
+  if (G_AASystemRED->m_CameraManager.m_Instances[0])
+  {
+    m_pCamera = G_AASystemRED->m_CameraManager.m_Instances[0];
+    m_pCamera->m_FOV = 1.134464;
+    m_pCamera->m_BackClip = -50000.0;
+    m_pCamera->m_BasePos.X = 0.0;
+    m_pCamera->m_Pos.X = 0.0;
+    m_pCamera->m_BasePos.Y = 135.0;
+    m_pCamera->m_Pos.Y = 135.0;
+    m_pCamera->m_BasePos.Z = 460.0;
+    m_pCamera->m_Pos.Z = 460.0;
+    m_pCamera->m_BaseAt.X = 0.0;
+    m_pCamera->m_At.X = 0.0;
+    m_pCamera->m_BaseAt.Y = 135;
+    m_pCamera->m_At.Y = 135;
+    m_pCamera->m_AspectRatio = 1.7777778;
+  }
+  AA_Vector3 pos0;
+  pos0.X = 0;
+  pos0.Z = 0;
+  AA_Vector3 pos1;
+  pos0.X = 1;
+  pos1.Y = 1;
+  pos0.Z = 0;
+  if (m_pCamera)
+  {
+    m_pCamera->Update();
+    
+  }
 }
 
 void BATTLE_CScreenManager::UpdateScreenPosition(bool bQuick)
@@ -328,8 +359,8 @@ void BATTLE_CScreenManager::UpdateScreenPosition(bool bQuick)
   {
     if (m_TargetWidth - m_ScreenWorldWidth < 0)
     {
-      v28 = int(uint64(0x92492493 * (m_TargetWidth - m_ScreenWorldWidth)) >> 32) > 3
-        + int(uint64(0x92492493 * (m_TargetWidth - m_ScreenWorldWidth)) >> 32) >> 31 - 1;
+      v28 = (int(uint64(0x92492493 * (m_TargetWidth - m_ScreenWorldWidth)) >> 32) > 3)
+        + (int(uint64(0x92492493 * (m_TargetWidth - m_ScreenWorldWidth)) >> 32) >> 31) - 1;
     }
     m_VelWidth = v28;
   }
@@ -528,8 +559,8 @@ void BATTLE_CScreenManager::UpdateScreenPosition(bool bQuick)
   }
   else if (m_ShakeTime % 4 == 3)
   {
-    shakeX = *reinterpret_cast<float*>(LODWORD(m_ShakeX));
-    shakeY = *reinterpret_cast<float*>(LODWORD(m_ShakeY));
+    shakeX = LODWORD(m_ShakeX) ^ 0x80000000;
+    shakeY = LODWORD(m_ShakeY) ^ 0x80000000;
   }
   float v59 = 0;
   float v60 = 0;
@@ -647,7 +678,6 @@ void BATTLE_CScreenManager::UpdateScreenPosition(bool bQuick)
   }
   else
   {
-    m_LinkMagnRecip = m_LinkMagnRecip;
     v77 = m_ScreenCameraControl.m_Param.Z * 135.0;
     v78 = m_ScreenCameraControl.m_Param.Z * 1280.0;
     v74 = (m_ScreenCameraControl.m_Flag & 2) == 0;
@@ -708,7 +738,7 @@ void BATTLE_CScreenManager::UpdateScreenPosition(bool bQuick)
       && m_ObjectScale == prevObjectScale
       && !m_VelWidth
       && m_LastFlag == m_Flag);
-  //LinkCameraMove();
+  LinkCameraMove();
   m_LastFlag = m_Flag;
 }
 
@@ -720,7 +750,7 @@ void BATTLE_CScreenManager::SetScreenCornerObject(bool bQuick)
   }
   bool hasLooped = false;
   int higherBottom = 0;
-  for (int i = 0; i < m_TargetObjectNum; i++)
+  for (unsigned int i = 0; i < m_TargetObjectNum; i++)
   {
     OBJ_CBase* v7 = m_ppObject[i];
     OBJ_CBase** v8 = &m_ppObject[i];
@@ -836,4 +866,290 @@ void BATTLE_CScreenManager::SetScreenCornerObject(bool bQuick)
   m_ObjBox.top = m_ObjTop;
   m_ObjBox.bottom = m_ObjBottom;
   m_ObjBox.higherBottom = higherBottom;
+}
+
+void BATTLE_CScreenManager::LinkCameraMove()
+{
+  if (!m_pCamera)
+    return;
+  AA_Vector3 out;
+  m_pCamera->CreateVec3Dir(&out);
+  float v6 = 0;
+  float v7 = out.Z * out.Z + out.X * out.X;
+  float v8 = sqrtf(v7);
+  if (v8 != 0)
+    v6 = out.Y / v8;
+  float v10 = v6 * out.X;
+  float v11 = v6 * out.Z;
+  float v12 = v10 * v10 + v7 + v11 * v11;
+  if (v12 > 0.000000001)
+  {
+    float v13 = 1 / sqrtf(v12);
+    float v14 = v13 + v13 * (0.5 - v12 * 0.5 * v13 * v13);
+    float v15 = v14 + v14 * (0.5 - v12 * 0.5 * v14 * v14);
+    v10 *= v15;
+    v11 *= v15;
+    v8 *= v8;
+  }
+  float v16 = v8 * out.Z - v11 * out.Y;
+  float v17 = v11 * out.X - v10 * out.Z;
+  float v18 = v10 * out.Y - v8 * out.X;
+  float v19 = v17 * v17 + v16 * v16 + v18 * v18;
+  if (v19 > 0.000000001)
+  {
+    float v20 = 0.5;
+    float v21 = 1.0 / sqrtf(v19);
+    float v22 = v19 * 0.5;
+    float v23 = v21 + v21 * (v20 - v22 * (v21 * v21));
+    float v24 = v23 + v23 * (v20 - v22 * (v23 * v23));
+    v16 = v16 * v24;
+    v17 = v17 * v24;
+    v18 = v18 * v24;
+  }
+  float v28 = m_MoveY * m_LinkMagn;
+  float v29 = m_MoveX * m_LinkMagn;
+  float v30 = m_ScreenW * 0.359375;
+  m_pCamera->m_Pos.Y -= v8 * v28 + v17 * v29 - m_ZoomMoveY;
+  m_pCamera->m_Pos.X -= v10 * v28 + v16 * v29;
+  m_pCamera->m_Pos.Z = v30 - v11 * v28 + v18 * v29;
+  float v34 = out.Z + m_pCamera->m_Pos.Z;
+  float v35 = m_pCamera->m_Pos.X + out.X;
+  float v36 = m_pCamera->m_Pos.Y + out.Y;
+  m_pCamera->m_Up.X = v10;
+  m_pCamera->m_Up.Y = v8;
+  m_pCamera->m_Up.Z = v11;
+  m_pCamera->m_At.Z = v34;
+  m_pCamera->m_At.X = v35;
+  m_pCamera->m_At.Y = v36;
+  int ArrayNum = 0;
+  int v26 = 1;
+  int v27 = 1;
+  int v37 = DBM_VAL_CONST_TABLE[DBM_Xrd3_WorldBreakType];
+  if (v37 >= 1)
+  {
+    if (v37)
+    {
+      ArrayNum = 6;
+    }
+  }
+  else
+  {
+    if (v37)
+    {
+      if (!v26)
+      {
+        if (!v37)
+        {
+          
+        }
+        return;
+      }
+    }
+    else
+    {
+      v27 = 1;
+    }
+    ArrayNum = 6; //temp code
+  }
+  int v39 = 3200;
+  int v41;
+  if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+  {
+    v41 = 3200;
+  }
+  else
+  {
+    v41 = float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale] * 1.6);
+  }
+  auto v43 = _mm_cvtsi32_si128(m_ScreenWorldCenterX);
+  FMatrix Matrix;
+  Matrix.M[1][1] = 0x3F800000;
+  Matrix.M[3][0] = LODWORD(m_pCamera->m_Pos.X);
+  Matrix.M[3][2] = LODWORD(m_pCamera->m_Pos.Z) | 0x3F80000000000000;
+  float v47 = v41 * ArrayNum * m_LinkMagn * 0.15915494;
+  float v48 = -57.295776 / v47;
+  float v50 = _mm_cvtepi32_ps(v43).m128_f32[0] * m_LinkMagn * v48;
+  Matrix.M[0][0] = 0x3F800000;
+  Matrix.M[2][2] = 0x3F80000000000000;
+  __m128 v89;
+  if (v27)
+  {
+    float v52 = 360 / ArrayNum;
+    float v53 = 360 / ArrayNum;
+    if (DBM_VAL_CONST_TABLE[DBM_Xrd3_WorldBreakFrame] > 0)
+    {
+      v53 /= DBM_VAL_CONST_TABLE[DBM_Xrd3_WorldBreakFrame];
+    }
+    unsigned int v55 = (unsigned int)((m_WorldSideMoveValue & ArrayNum) * v52) ^ 0x3F80000000000000;
+    if (m_WorldSideMoveDeg >= v55)
+    {
+      v50 = m_WorldSideMoveDeg;
+      if (m_WorldSideMoveDeg <= v55)
+      {
+        int v56;
+        if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+        {
+          v56 = 3200;
+        }
+        else
+        {
+          v56 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+          v39 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+        }
+        v89.m128_i32[1] = 0;
+        v89.m128_i32[3] = 1065353216;
+        Matrix.M[1][1] = 0x3F800000;
+        float v58 = v39 * m_WorldSideMoveValuePrev;
+        Matrix.M[0][0] = 0x3F800000;
+        __m128 v59 = v89;
+        Matrix.M[2][2] = 0x3F800000;
+        v59.m128_f32[0] = ((float)v56 * (float)m_WorldSideMoveValue * m_LinkMagn - v58 * m_LinkMagn) * 1 + v58 * m_LinkMagn;
+        __m128 v60 = _mm_shuffle_ps(v59, v59, 210);
+        v60.m128_f32[0] = m_pCamera->m_Pos.Z;
+        v89 = _mm_shuffle_ps(v60, v60, 201);
+        *(__m128 *)&Matrix.M[3][0] = v89;
+      }
+      else
+      {
+        m_WorldSideMoveDeg = v50 = m_WorldSideMoveDeg - v53;
+        if (m_WorldSideMoveDeg >= v55)
+        {
+          float v45 = 1 - float(unsigned int(v55 - v50) & 0x3F80000000000000) / v52;
+          int v56;
+          if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+          {
+            v56 = 3200;
+          }
+          else
+          {
+            v56 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+            v39 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+          }
+          v89.m128_i32[1] = 0;
+          v89.m128_i32[3] = 1065353216;
+          Matrix.M[1][1] = 0x3F800000;
+          float v58 = v39 * m_WorldSideMoveValuePrev;
+          Matrix.M[0][0] = 0x3F800000;
+          __m128 v59 = v89;
+          Matrix.M[2][2] = 0x3F800000;
+          v59.m128_f32[0] = ((float)v56 * (float)m_WorldSideMoveValue * m_LinkMagn - v58 * m_LinkMagn) * v45 + v58 * m_LinkMagn;
+          __m128 v60 = _mm_shuffle_ps(v59, v59, 210);
+          v60.m128_f32[0] = m_pCamera->m_Pos.Z;
+          v89 = _mm_shuffle_ps(v60, v60, 201);
+          *(__m128 *)&Matrix.M[3][0] = v89;
+        }
+        else
+        {
+          m_WorldSideMoveDeg += v53;
+          if (m_WorldSideMoveDeg <= v55)
+          {
+            float v45 = 1 - float(unsigned int(v55 - v50) & 0x3F80000000000000) / v52;
+            int v56;
+            if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+            {
+              v56 = 3200;
+            }
+            else
+            {
+              v56 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+              v39 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+            }
+            v89.m128_i32[1] = 0;
+            v89.m128_i32[3] = 1065353216;
+            Matrix.M[1][1] = 0x3F800000;
+            float v58 = v39 * m_WorldSideMoveValuePrev;
+            Matrix.M[0][0] = 0x3F800000;
+            __m128 v59 = v89;
+            Matrix.M[2][2] = 0x3F800000;
+            v59.m128_f32[0] = ((float)v56 * (float)m_WorldSideMoveValue * m_LinkMagn - v58 * m_LinkMagn) * v45 + v58 * m_LinkMagn;
+            __m128 v60 = _mm_shuffle_ps(v59, v59, 210);
+            v60.m128_f32[0] = m_pCamera->m_Pos.Z;
+            v89 = _mm_shuffle_ps(v60, v60, 201);
+            *(__m128 *)&Matrix.M[3][0] = v89;
+          }
+          m_WorldSideMoveDeg = v55;
+          v50 = unsigned int(m_WorldSideMoveValue % ArrayNum * v52) ^ 0x80000000;
+          int v56;
+          if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+          {
+            v56 = 3200;
+          }
+          else
+          {
+            v56 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+            v39 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+          }
+          v89.m128_i32[1] = 0;
+          v89.m128_i32[3] = 1065353216;
+          Matrix.M[1][1] = 0x3F800000;
+          float v58 = v39 * m_WorldSideMoveValuePrev;
+          Matrix.M[0][0] = 0x3F800000;
+          __m128 v59 = v89;
+          Matrix.M[2][2] = 0x3F800000;
+          v59.m128_f32[0] = ((float)v56 * (float)m_WorldSideMoveValue * m_LinkMagn - v58 * m_LinkMagn) * 1 + v58 * m_LinkMagn;
+          __m128 v60 = _mm_shuffle_ps(v59, v59, 210);
+          v60.m128_f32[0] = m_pCamera->m_Pos.Z;
+          v89 = _mm_shuffle_ps(v60, v60, 201);
+          *(__m128 *)&Matrix.M[3][0] = v89;
+          m_WorldSideMoveDeg = v50;
+        }
+      }
+    }
+    else
+    {
+      m_WorldSideMoveDeg += v53;
+      if (m_WorldSideMoveDeg <= v55)
+      {
+        float v45 = 1 - float(unsigned int(v55 - v50) & 0x3F80000000000000) / v52;
+        int v56;
+        if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+        {
+          v56 = 3200;
+        }
+        else
+        {
+          v56 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+          v39 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+        }
+        v89.m128_i32[1] = 0;
+        v89.m128_i32[3] = 1065353216;
+        Matrix.M[1][1] = 0x3F800000;
+        float v58 = v39 * m_WorldSideMoveValuePrev;
+        Matrix.M[0][0] = 0x3F800000;
+        __m128 v59 = v89;
+        Matrix.M[2][2] = 0x3F800000;
+        v59.m128_f32[0] = ((float)v56 * (float)m_WorldSideMoveValue * m_LinkMagn - v58 * m_LinkMagn) * v45 + v58 * m_LinkMagn;
+        __m128 v60 = _mm_shuffle_ps(v59, v59, 210);
+        v60.m128_f32[0] = m_pCamera->m_Pos.Z;
+        v89 = _mm_shuffle_ps(v60, v60, 201);
+        *(__m128 *)&Matrix.M[3][0] = v89;
+      }
+      m_WorldSideMoveDeg = v55;
+      v50 = unsigned int(m_WorldSideMoveValue % ArrayNum * v52) ^ 0x80000000;
+      int v56;
+      if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+      {
+        v56 = 3200;
+      }
+      else
+      {
+        v56 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+        v39 = (float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale]) * 1.6);
+      }
+      v89.m128_i32[1] = 0;
+      v89.m128_i32[3] = 1065353216;
+      Matrix.M[1][1] = 0x3F800000;
+      float v58 = v39 * m_WorldSideMoveValuePrev;
+      Matrix.M[0][0] = 0x3F800000;
+      __m128 v59 = v89;
+      Matrix.M[2][2] = 0x3F800000;
+      v59.m128_f32[0] = ((float)v56 * (float)m_WorldSideMoveValue * m_LinkMagn - v58 * m_LinkMagn) * 1 + v58 * m_LinkMagn;
+      __m128 v60 = _mm_shuffle_ps(v59, v59, 210);
+      v60.m128_f32[0] = m_pCamera->m_Pos.Z;
+      v89 = _mm_shuffle_ps(v60, v60, 201);
+      *(__m128 *)&Matrix.M[3][0] = v89;
+      m_WorldSideMoveDeg = v50;
+    }
+  }
+  m_OffsetMatrix = Matrix.Inverse();
 }

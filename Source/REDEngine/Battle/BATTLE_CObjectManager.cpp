@@ -99,7 +99,7 @@ void BATTLE_CObjectManager::BOM_ConstructorSub()
 	m_bForceBGHide = 0;
 	m_bRequestDisplayFade = false;
 	m_delayType = INP_DELAY_NORMAL;
-	m_DragonBall = -256;
+	m_DragonBall = 0;
 	m_bARendaComplete = 0;
 	m_lastGainedDBSide = SIDE_ID_INVALID;
 	if (m_pShenlongSystem.m_Ptr)
