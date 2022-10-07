@@ -15,6 +15,8 @@ struct BATTLE_ScreenCameraControl
 	unsigned int m_Level;
 	float m_Friction;
 	unsigned int m_Flag;
+
+	bool Update();
 };
 
 class BATTLE_CScreenManager

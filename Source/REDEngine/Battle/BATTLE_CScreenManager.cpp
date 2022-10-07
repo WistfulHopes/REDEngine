@@ -1,8 +1,144 @@
 ﻿#include "BATTLE_CScreenManager.h"
 
+#include "AASystemRED.h"
 #include "Constants.h"
 #include "OBJ_CCharBase.h"
+#include "Framework/Docking/LayoutExtender.h"
 #include "REDEngine/GameState/REDGameState_Battle.h"
+#include "REDEngine/red/btl.h"
+
+bool BATTLE_ScreenCameraControl::Update()
+{
+  AREDGameState_Battle* GameState = Cast<AREDGameState_Battle>(GWorld->GetGameState());
+  BATTLE_CScreenManager* ScreenManager = GameState->ScreenManager.Get();
+  float X = 0;
+  float Y = 0;
+  float Z = ScreenManager->m_ScreenWorldWidth * 0.00078125;
+  if (m_Hold)
+  {
+    X = m_Target.X;
+    Y = m_Target.Y;
+    Z = m_Target.Z;
+    m_FixX = false;
+    m_FixZ = false;
+  }
+  else
+  {
+    X = ScreenManager->m_ScreenWorldCenterX * ScreenManager->m_LinkMagn;
+    Y = ScreenManager->m_ScreenWorldCenterY * ScreenManager->m_LinkMagn + Z * 135;
+  }
+  float v28 = m_Param.X;
+  float v29 = m_Param.Z;
+  int level;
+  if (m_Hold)
+    level = m_Level;
+  else
+    level = 30;
+  float v14 = 1 / level;
+  m_Vel.X += (X - m_Param.X) * v14;
+  m_Vel.Y += (Y - m_Param.Y) * v14;
+  m_Vel.Z += (Z - m_Param.Z) * v14;
+  m_Param.X += m_Vel.X;
+  m_Param.Y += m_Vel.Y;
+  m_Param.Z += m_Vel.Z;
+  m_Vel.X *= 0.75;
+  m_Vel.Y *= 0.75;
+  m_Vel.Z *= 0.75;
+  bool v20 = X < v28;
+  if (X > v28)
+  {
+    if (X < m_Param.X)
+    {
+      m_Param.X = X;
+      m_Vel.X = 0;
+    }
+    else
+    {
+      v20 = X < v28;
+      if (v20 && X >= m_Param.X || m_FixX)
+      {
+        m_Param.X = X;
+        m_Vel.X = 0;
+      }
+    }
+  }
+  else
+  {
+    if (v20 && X >= m_Param.X || m_FixX)
+    {
+      m_Param.X = X;
+      m_Vel.X = 0;
+    }
+  }
+  float p_Y = m_Param.Y;
+  int v22 = Y < v28 + 1;
+  int v23 = 0;
+  if (Y > v22)
+  {
+    if (Y < p_Y)
+    {
+      v23 = p_Y = Y;
+      m_Vel.Y = 0;
+    }
+    else
+    {
+      v22 = Y < v28 + 1;
+      if (v22 && Y > p_Y)
+      {
+        v23 = p_Y = Y;
+        m_Vel.Y = 0;
+      }
+      v23 = p_Y;
+      if (Y == p_Y || m_FixY)
+      {
+        v23 = p_Y = Y;
+        m_Vel.Y = 0;
+      }
+    }
+  }
+  else
+  {
+    if (v22 && Y > p_Y)
+    {
+      v23 = p_Y = Y;
+      m_Vel.Y = 0;
+    }
+    v23 = p_Y;
+    if (Y == p_Y || m_FixY)
+    {
+      v23 = p_Y = Y;
+      m_Vel.Y = 0;
+    }
+  }
+  int v25;
+  int v26;
+  float p_Z = m_Param.Z;
+  if ( Z > v29 && Z < p_Z || (v25 = v23, Z < v29) && Z > p_Z || (v26 = p_Z, Z == p_Z) || m_FixZ )
+  {
+    p_Z = Z;
+    v25 = v23;
+    m_Vel.Z = 0.0;
+    v26 = Z;
+  }
+  if (!m_Hold)
+  {
+    if (X == m_Param.X)
+    {
+      m_FixX = true;
+    }
+    if (Y == v25)
+    {
+      m_FixY = true;
+    }
+    if (Y == v26)
+    {
+      m_FixZ = true;
+    }
+  }
+  if (!m_Repeat)
+    m_Hold = false;
+  return m_FixX && m_FixY && m_FixZ;
+}
 
 BATTLE_CScreenManager::BATTLE_CScreenManager()
 {
@@ -92,7 +228,7 @@ void BATTLE_CScreenManager::UpdateScreenPosition(bool bQuick)
   m_MaxZoomOutWidth = 1536;
   m_ZoomOutBeginDistX = 1280;
   m_ZoomOutBeginDistY = 600;
-  if (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+  if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
   {
     m_MaxZoomOutWidth = 1689;
     m_ZoomOutBeginDistX = 1280;
@@ -123,7 +259,7 @@ void BATTLE_CScreenManager::UpdateScreenPosition(bool bQuick)
       {
         int v13 = 1280;
         if (v11 > 1280)
-           v13 = m_ZoomOutBeginDistX / 4 + m_ObjBox.right - m_ObjBox.left;
+          v13 = m_ZoomOutBeginDistX / 4 + m_ObjBox.right - m_ObjBox.left;
         if (v13 < m_MaxZoomOutWidth)
           v12 = v13;
       }
@@ -157,13 +293,423 @@ void BATTLE_CScreenManager::UpdateScreenPosition(bool bQuick)
           targetOffsetAirYMax = m_TargetOffsetY - m_TargetOffsetLandYAdd;
         }
       }
+      int v20;
       m_TargetOffsetY = targetOffsetAirYMax;
-      if (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1 || DBM_VAL_CONST_TABLE[DBM_ScreenY_New])
+      if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1 || DBM_VAL_CONST_TABLE[DBM_ScreenY_New] == 1)
       {
-        
+        int v22 = m_ObjBox.higherBottom - m_ObjBox.bottom;
+        if (v22 > m_ZoomOutBeginDistY)
+        {
+          v2 = v22 - m_ZoomOutBeginDistY + 1280;
+          if (v2 > m_MaxZoomOutWidth)
+            v2 = m_MaxZoomOutWidth;
+        }
+        int v23 = int(float(1000 * v2) / float(m_WidthY));
+        v20 = v23 * m_ObjBox.higherBottom / 1000 - v23 * targetOffsetAirYMax / 1000;
+      }
+      else
+      {
+        int v19 = int(uint64(0x10624DD3 * v18 * targetOffsetAirYMax) >> 32) >> 6;
+        v20 = v18 * m_ObjBox.higherBottom / 1000 - (v19 >> 31) + v19;
+      }
+      if (v20 > 0)
+      {
+        m_TargetCenterY = m_WorldTopSide;
+      }
+      else
+      {
+        m_TargetCenterY = 0; 
       }
     }
   }
+  m_DelayW = 0;
+  int v28 = 0;
+  if (m_TargetWidth - m_ScreenWorldWidth <= 0)
+  {
+    if (m_TargetWidth - m_ScreenWorldWidth < 0)
+    {
+      v28 = int(uint64(0x92492493 * (m_TargetWidth - m_ScreenWorldWidth)) >> 32) > 3
+        + int(uint64(0x92492493 * (m_TargetWidth - m_ScreenWorldWidth)) >> 32) >> 31 - 1;
+    }
+    m_VelWidth = v28;
+  }
+  else
+  {
+    int v27;
+    if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+    {
+      v27 = int(uint64(0x400000006 * (m_TargetWidth - m_ScreenWorldWidth)) >> 32) >> 3;
+      int v29 = (v27 >> 31) + v27;
+      if (v29 > 40)
+        m_VelWidth = v27;
+      else
+        m_VelWidth = 40;
+      m_DelayW = 450;
+    }
+    else
+    {
+      if (m_ObjBox.higherBottom <= 1000)
+      {
+        v27 = int(uint64(0x55555556 * (m_TargetWidth - m_ScreenWorldWidth)) >> 32);
+        int v29 = (v27 >> 31) + v27;
+        if (v29 > 40)
+          m_VelWidth = v27;
+        else
+          m_VelWidth = 40;
+        m_DelayW = 450;
+      }
+      else
+      {
+        m_VelWidth = (m_TargetWidth - m_ScreenWorldWidth) / 10;
+      }
+    }
+  }
+  m_ScreenWorldWidth += m_VelWidth;
+  bool v31;
+  if (!bQuick)
+  {
+    v31 = m_VelWidth < 0;
+    if (m_VelWidth < 0)
+    {
+      if (m_ScreenWorldWidth > m_TargetWidth)
+      {
+        v31 = m_VelWidth <= 0;
+        if (!v31 && m_ScreenWorldWidth >= m_TargetWidth)
+        {
+          m_ScreenWorldWidth = m_TargetWidth;
+          m_VelWidth = 0;
+        }
+      }
+      else
+      {
+        m_ScreenWorldWidth = m_TargetWidth;
+        m_VelWidth = 0;
+      }
+    }
+  }
+  else
+  {
+    m_ScreenWorldWidth = m_TargetWidth;
+    m_VelWidth = 0;
+  }
+  int v32 = m_TargetCenterX - m_ScreenWorldCenterX;
+  int v33 = DBM_VAL_CONST_TABLE[DBM_ScreenXSpeedFrame];
+  int v34 = DBM_VAL_CONST_TABLE[DBM_ScreenXSpeedMax];
+  if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+  {
+    v33 = 2;
+    v34 = 100;
+  }
+  BATTLE_CObjectManager* ObjectManager = red::btl::GetObjectManager();
+  int v36 = v33 - 5;
+  if ((ObjectManager->m_BOMFlag & 0x400000) == 0)
+    v36 = v33;
+  m_VelCenterX = v32 / v36;
+  if (m_VelCenterX <= v34)
+  {
+    if (m_VelCenterX < -v34)
+    {
+      m_VelCenterX = v34 = -v34;
+    }
+  }
+  else
+  {
+    m_VelCenterX = v34;
+  }
+  if (v32 != 0)
+  {
+    if (v32 < 0)
+    {
+      --v34;
+    }
+    else
+    {
+      ++v34;
+    }
+    m_VelCenterX = v34;
+  }
+  m_ScreenWorldCenterX += v34;
+  if (!bQuick)
+  {
+    if (v34 < 0)
+    {
+      if (m_ScreenWorldCenterX < m_TargetCenterX)
+      {
+        m_ScreenWorldCenterX = m_TargetCenterX;
+        m_VelCenterX = 0;
+      }
+    }
+  }
+  else
+  {
+    m_ScreenWorldCenterX = m_TargetCenterX;
+    m_VelCenterX = 0;
+  }
+  int v43 = m_TargetCenterY - m_ScreenWorldCenterY;
+  int v44 = DBM_VAL_CONST_TABLE[DBM_ScreenYSpeedMax];
+  int v45;
+  if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+  {
+    v45 = 4000;
+    v44 = 70;
+    if (v43 <= 0)
+      v45 = 3000;
+  }
+  else
+  {
+    v45 = DBM_VAL_CONST_TABLE[DBM_ScreenYSpeedFrameDown];
+    if (v43 > 0)
+      v45 = DBM_VAL_CONST_TABLE[DBM_ScreenYSpeedFrameUp];
+  }
+  m_VelCenterY = v43 / v45;
+  if (m_VelCenterY <= v44)
+  {
+    int v47 = -v44;
+    v44 = 1000 * v43 / v45;
+    if (m_VelCenterY < v47)
+    {
+      m_VelCenterY = v47;
+      v44 = v47;
+    }
+  }
+  else
+  {
+    m_VelCenterY = v44;
+  }
+  if (v43 != 0)
+  {
+    if (v43 < 0)
+    {
+      --v44;
+    }
+    else
+    {
+      ++v44;
+    }
+    m_VelCenterX = v44;
+  }
+  m_ScreenWorldCenterY += v44;
+  if (!bQuick)
+  {
+    if (v44 < 0)
+    {
+      if (m_ScreenWorldCenterY < m_TargetCenterY)
+      {
+        m_ScreenWorldCenterY = m_TargetCenterY;
+        m_VelCenterY = 0;
+      }
+    }
+  }
+  else
+  {
+    m_ScreenWorldCenterY = m_TargetCenterY;
+    m_VelCenterY = 0;
+  }
+  int v52 = m_ScreenWorldWidth / 2;
+  if (m_ScreenWorldCenterX - v52 < m_WorldLeftSide)
+  {
+    m_ScreenWorldCenterX = v52 + m_WorldLeftSide;
+    m_bTouchWorldSide = true;
+  }
+  else
+  {
+    if (v52 + m_ScreenWorldCenterX > m_WorldRightSide)
+    {
+      m_ScreenWorldCenterX = m_WorldRightSide - v52;
+      m_bTouchWorldSide = true;
+    }
+  }
+  int shakeX = 0;
+  int shakeY = 0;
+  if (m_ShakeTime % 4 ==1)
+  {
+    shakeX = m_ShakeX;
+    shakeY = m_ShakeY;
+  }
+  else if (m_ShakeTime % 4 == 3)
+  {
+    shakeX = *reinterpret_cast<float*>(LODWORD(m_ShakeX));
+    shakeY = *reinterpret_cast<float*>(LODWORD(m_ShakeY));
+  }
+  float v59 = 0;
+  float v60 = 0;
+  if (m_ShakeTime <= 0)
+  {
+    shakeX = 0;
+  }
+  else
+  {
+    v59 = m_ShakeX * 0.9;
+    v60 = m_ShakeY * 0.9;
+    m_ShakeTime = m_ShakeTime - 1;
+    m_ShakeX = v59;
+    m_ShakeY = v60;
+  }
+  m_WorldLeftSide = -1600;
+  m_WorldRightSide = 1600;
+  m_ScreenCollisionLeft = m_ScreenWorldCenterX - v52;
+  m_ScreenCollisionRight = m_ScreenWorldCenterX + v52;
+  m_WorldTopSide = 5400;
+  int v61 = 3200;
+  int v62 = 0;
+  int v63 = 0;
+  int v64 = 0;
+  if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] == 1)
+  {
+    v62 = 10800;
+    v63 = 3200;
+    v64 = -3200;
+  }
+  else
+  {
+    v62 = 5400 * DBM_VAL_CONST_TABLE[DBM_WorldHeightScale] / 1000;
+    v63 = 1600 * DBM_VAL_CONST_TABLE[DBM_WorldWidthScale] / 1000;
+    v64 = -1600 * DBM_VAL_CONST_TABLE[DBM_WorldWidthScale] / 1000;
+  }
+  m_WorldLeftSide = v64;
+  m_WorldRightSide = v63;
+  m_WorldTopSide = v62;
+  if ((m_Flag & 0x1000) != 0)
+  {
+    m_WorldLeftSide = m_WorldLeftSide - 640;
+    m_WorldRightSide = m_WorldRightSide + 640;
+  }
+  if (m_WorldSideMoveValue)
+  {
+    if constexpr (DBM_VAL_CONST_TABLE[DBM_CameraBehavior] != 1)
+      v61 = int(float(DBM_VAL_CONST_TABLE[DBM_WorldWidthScale] * 1.6));
+    int v67 = m_WorldSideMoveValue * v61;
+    v64 += v67;
+    v63 += v67;
+    m_WorldLeftSide = v64;
+    m_WorldRightSide = v63;
+  }
+  if ((m_Flag & 0x800) != 0)
+  {
+    m_ScreenCollisionLeft = v64;
+    m_ScreenCollisionRight = v63;
+  }
+  m_ScreenCenterYNoShake = m_ScreenWorldCenterY;
+  m_ScreenCollisionYUp = (int)((float)(135000.0
+      / (float)(int)(float)(1280000.0
+        / (float)m_ScreenWorldWidth))
+    * m_LinkMagnRecip
+    + (float)(368000.0
+      / (float)(int)(float)(1280000.0 / (float)m_ScreenWorldWidth))
+    + (float)m_ScreenCenterYNoShake);
+  m_ScreenCenterXNoShake = m_ScreenWorldCenterX;
+  m_ScreenWorldCenterX += shakeX;
+  m_ScreenWorldCenterY += shakeY;
+  unsigned int v71 = 0;
+  if (v59 == 0 && v60 == 0)
+  {
+    if (m_Flag & 0x200)
+    {
+      v71 = m_Flag & 0xFFFFF8FF | 0x400;
+    }
+    else
+    {
+      if (m_Flag & 0x400)
+        m_Flag &= ~0x400;
+      v71 = m_Flag & 0xFFFFFCFF;
+    }
+  }
+  else
+  {
+    if (m_Flag & 0x200)
+    {
+      if (m_Flag & 0x100)
+        m_Flag &= ~0x100;
+    }
+    else
+    {
+      m_Flag |= 0x100;
+    }
+    v71 = m_Flag | 0x200;
+  }
+  m_Flag = v71;
+  m_ScreenWorldLeft = m_ScreenWorldCenterX - v52;
+  m_ScreenWorldRight = m_ScreenWorldCenterX + v52;
+  int v81;
+  int v82;
+  int v84;
+  float v77;
+  float v78;
+  bool v74 = true;
+  int v79;
+  float Y;
+  int v83;
+  if (m_ScreenCameraControl.Update())
+  {
+    v81 = m_ScreenWorldWidth;
+    v82 = m_ScreenWorldCenterX;
+    v84 = m_ScreenWorldCenterY;
+  }
+  else
+  {
+    m_LinkMagnRecip = m_LinkMagnRecip;
+    v77 = m_ScreenCameraControl.m_Param.Z * 135.0;
+    v78 = m_ScreenCameraControl.m_Param.Z * 1280.0;
+    v74 = (m_ScreenCameraControl.m_Flag & 2) == 0;
+    v79 = (int)(float)(m_LinkMagnRecip * m_ScreenCameraControl.m_Param.X);
+    Y = m_ScreenCameraControl.m_Param.Y;
+    m_ScreenX = v79;
+    v81 = (int)v78;
+    v82 = v79 + m_ShakeX;
+    v83 = (int)(float)((float)(Y - v77) * m_LinkMagnRecip);
+    m_ScreenY = v83;
+    v84 = v83 + m_ShakeY;
+  }
+  m_ScreenW = v81;
+  m_ScreenX = v82;
+  m_ScreenY = v84;
+  if (m_Flag & 0x10)
+  {
+    v74 = true;
+    auto camera = G_AASystemRED->m_CameraManager.m_Instances[0];
+    m_ScreenW = (camera->m_Pos.Z * 2.7826087);
+    m_ScreenX = (m_LinkMagnRecip * camera->m_Pos.X);
+    v84 = camera->m_Pos.Y - m_ScreenW * 0.10546875 * m_LinkMagnRecip;
+  }
+  if (v81 <= 0)
+  {
+    v81 = 1;
+    m_ScreenW = 1;
+  }
+  if (v74)
+  {
+    int v88 = v82;
+    int v89 = v81 / 2;
+    if (v82 - v81 / 2 < m_WorldLeftSide)
+    {
+      v88 = v89 + m_WorldLeftSide;
+      m_ScreenX = v89 + m_WorldLeftSide;
+    }
+    v82 = v88;
+    if (v88 + v89 > m_WorldRightSide)
+    {
+      m_ScreenX = m_WorldRightSide - v89;
+    }
+  }
+  int prevObjectScale = m_ObjectScale;
+  if (v84 >= m_WorldTopSide - 900)
+    v84 = m_WorldTopSide - 900;
+  m_ScreenY = v84;
+  m_MoveX = m_ScreenX - v82;
+  m_MoveY = m_ScreenY - v84;
+  m_ScreenXLeft = v82 - v81 / 2;
+  m_ObjectScale = 1280000 / v81;
+  this->m_ZoomMoveY = (float)((float)m_ScreenW * 0.10546875) - (float)(v81 * 0.10546875);
+  this->m_ScreenYUp = (int)((float)(135000.0 / (float)m_ObjectScale) * this->m_LinkMagnRecip
+    + (float)(368000.0 / (float)m_ObjectScale) + (float)v84);
+  m_Stable = bQuick ||
+    (!m_MoveX && !m_MoveY && v81 == m_ScreenW
+      && (m_TargetObjectNum != 1 || m_ObjectScale == 1000)
+      && m_ObjectScale == prevObjectScale
+      && !m_VelWidth
+      && m_LastFlag == m_Flag);
+  //LinkCameraMove();
+  m_LastFlag = m_Flag;
 }
 
 void BATTLE_CScreenManager::SetScreenCornerObject(bool bQuick)
