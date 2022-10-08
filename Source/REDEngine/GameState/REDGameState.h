@@ -79,6 +79,8 @@ protected:
 	bool bOverrideLightDir;
 
 public:
+	AREDGameState();
+	
 	virtual void ReceivedGameModeClass() override;
 	virtual void HandleMatchIsWaitingToStart() override;
 	virtual void Tick(float DeltaSeconds) override;

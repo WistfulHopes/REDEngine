@@ -1187,5 +1187,5 @@ void BATTLE_CScreenManager::LinkCameraMove()
       m_WorldSideMoveDeg = v50;
     }
   }
-  m_OffsetMatrix = Matrix.Inverse();
+  //m_OffsetMatrix = Matrix.Inverse();
 }

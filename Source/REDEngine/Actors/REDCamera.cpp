@@ -51,6 +51,10 @@ void AREDCamera_Battle::UpdateViewTargetFromBattle(double DeltaTime)
 		{
 			UpdateCameraLocation(&FinalViewTarget.POV, DeltaTime, 0);
 		}
+		else
+		{
+			UpdateCameraLocation(&FinalViewTarget.POV, DeltaTime, 0);
+		}
 		ApplyCameraModifiers(DeltaTime, FinalViewTarget.POV);
 	}
 	LastPOV_WithoutOffset = FinalViewTarget.POV;
