@@ -33,10 +33,8 @@ public:
 
 	void CreateVec3Dir(AA_Vector3* out);
 	void PlaneFromPoint(AA_Vector3* pP0, AA_Vector3* pP1, AA_Vector3* pP2, AA_Vector4* pPlane);
-	virtual void Update() = 0;
+	void Update();
 };
 
-class AAUE_CCamera : public AA_CCamera
-{
-	virtual void Update() override;
-};
+
+float CalcBattleCameraLinkMagn(AA_CCamera *cam, AA_Vector3 *pos0, AA_Vector3 *pos1);

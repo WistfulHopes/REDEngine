@@ -220,11 +220,11 @@ BATTLE_CScreenManager::BATTLE_CScreenManager()
   m_PrevCameraMatrix.M[3][3] = 1.0;
 }
 
-void BATTLE_CScreenManager::ResetCameraManager()
+void BATTLE_CScreenManager::ResetScreenManager()
 {
-  if (G_AASystemRED->m_CameraManager.m_Instances[0])
+  if (GAASystemRed->m_CameraManager.m_Instances[0])
   {
-    m_pCamera = G_AASystemRED->m_CameraManager.m_Instances[0];
+    m_pCamera = GAASystemRed->m_CameraManager.m_Instances[0];
     m_pCamera->m_FOV = 1.134464;
     m_pCamera->m_BackClip = -50000.0;
     m_pCamera->m_BasePos.X = 0.0;
@@ -240,8 +240,6 @@ void BATTLE_CScreenManager::ResetCameraManager()
     m_pCamera->m_AspectRatio = 1.7777778;
   }
   AA_Vector3 pos0;
-  pos0.X = 0;
-  pos0.Z = 0;
   AA_Vector3 pos1;
   pos0.X = 1;
   pos1.Y = 1;
@@ -249,8 +247,46 @@ void BATTLE_CScreenManager::ResetCameraManager()
   if (m_pCamera)
   {
     m_pCamera->Update();
-    
+    m_LinkMagn = CalcBattleCameraLinkMagn(m_pCamera, &pos0, &pos1);
+    m_LinkMagnRecip = 1.0 / m_LinkMagn;
   }
+  m_bStopScreenPositionUpdate = false;
+  m_ScreenCenterXNoShake = 0;
+  m_TargetCenterX = 0;
+  m_ScreenWorldCenterX = 0;
+  m_TargetWidth = 1280;
+  m_ScreenWorldWidth = 1280;
+  m_VelCenterY = 0;
+  m_DelayW = 0;
+  m_ShakeTime = 0;
+  m_ScreenX = 0;
+  m_ScreenW = 1280;
+  m_ScreenCameraControl.m_Target.X = 0;
+  m_ScreenCameraControl.m_Target.Z = 1;
+  m_ScreenCameraControl.m_Target.Y = 0;
+  m_ScreenCameraControl.m_Param.Z = 1;
+  m_ScreenCameraControl.m_Vel.Y = 0;
+  m_ScreenCameraControl.m_Hold = false;
+  m_ScreenCameraControl.m_FixZ = true;
+  m_ScreenCameraControl.m_Level = 1;
+  m_ScreenCameraControl.m_Friction = 1;
+  if (m_pCamera)
+  {
+    m_pCamera->m_Pos.X = m_pCamera->m_BasePos.X;
+    m_pCamera->m_Pos.Y = m_pCamera->m_BasePos.Y;
+    m_pCamera->m_Pos.Z = m_pCamera->m_BasePos.Z;
+    m_pCamera->m_At.X = m_pCamera->m_BaseAt.X;
+    m_pCamera->m_At.Y = m_pCamera->m_BaseAt.Y;
+    m_pCamera->m_At.Z = m_pCamera->m_BaseAt.Z;
+    m_pCamera->m_Up.X = m_pCamera->m_BaseUp.X;
+    m_pCamera->m_Up.Y = m_pCamera->m_BaseUp.Y;
+    m_pCamera->m_Up.Z = m_pCamera->m_BaseUp.Z;
+    m_pCamera->Update();
+  }
+  m_WorldLeftSide = -1600;
+  m_WorldRightSide = 1600;
+  m_WorldTopSide = 5400;
+  m_Flag = 0;
 }
 
 void BATTLE_CScreenManager::UpdateScreenPosition(bool bQuick)
@@ -696,7 +732,7 @@ void BATTLE_CScreenManager::UpdateScreenPosition(bool bQuick)
   if (m_Flag & 0x10)
   {
     v74 = true;
-    auto camera = G_AASystemRED->m_CameraManager.m_Instances[0];
+    auto camera = GAASystemRed->m_CameraManager.m_Instances[0];
     m_ScreenW = (camera->m_Pos.Z * 2.7826087);
     m_ScreenX = (m_LinkMagnRecip * camera->m_Pos.X);
     v84 = camera->m_Pos.Y - m_ScreenW * 0.10546875 * m_LinkMagnRecip;

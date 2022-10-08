@@ -10,6 +10,7 @@
 #include "REDGameState.generated.h"
 
 class AREDPlayerController;
+class AREDCamera;
 /**
  * 
  */
@@ -66,6 +67,8 @@ protected:
 	UPROPERTY()
 	AREDPlayerController *PrimaryPC;
 	UPROPERTY()
+	AREDCamera* PrimaryCamera;
+	UPROPERTY()
 	UMaterialInstancePool *MaterialInstancePool;
 	bool bDispCinemaScope;
 	bool bDispCinemaScope_FrontFade;
@@ -76,6 +79,11 @@ protected:
 	bool bOverrideLightDir;
 
 public:
+	virtual void ReceivedGameModeClass() override;
 	virtual void HandleMatchIsWaitingToStart() override;
 	virtual void Tick(float DeltaSeconds) override;
 };
+
+void REDInitializeOnce();
+
+static bool s_bInitialized = false;

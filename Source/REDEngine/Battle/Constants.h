@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "DataTypes/Enums.h"
+
 constexpr int DBM_VAL_CONST_TABLE[] =
 {
   0,

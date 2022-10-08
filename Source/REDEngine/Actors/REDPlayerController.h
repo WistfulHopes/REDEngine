@@ -25,6 +25,8 @@ UCLASS()
 class REDENGINE_API AREDPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+public:
+	AREDPlayerController();
 	
 	UREDSceneContext REDSceneContext;
 };

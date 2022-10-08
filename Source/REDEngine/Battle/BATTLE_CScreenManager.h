@@ -108,7 +108,7 @@ public:
 	FMatrix m_PrevCameraMatrix;
 	OBJ_BOX m_ObjBox;
 
-	void ResetCameraManager();
+	void ResetScreenManager();
 	void UpdateScreenPosition(bool bQuick);
 	void SetScreenCornerObject(bool bQuick);
 	void LinkCameraMove();

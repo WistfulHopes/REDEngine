@@ -3,6 +3,14 @@
 
 #include "REDGameState.h"
 
+#include "REDEngine/Battle/AASystemRED.h"
+
+void AREDGameState::ReceivedGameModeClass()
+{
+	Super::ReceivedGameModeClass();
+	REDInitializeOnce();
+}
+
 void AREDGameState::HandleMatchIsWaitingToStart()
 {
 	Super::HandleMatchIsWaitingToStart();
@@ -11,4 +19,13 @@ void AREDGameState::HandleMatchIsWaitingToStart()
 void AREDGameState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+}
+
+void REDInitializeOnce()
+{
+	if (!s_bInitialized)
+	{
+		AASystemRED::StaticInitialize();
+		s_bInitialized = true;
+	}
 }

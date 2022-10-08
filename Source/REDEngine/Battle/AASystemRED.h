@@ -6,6 +6,9 @@ class AASystemRED
 public:
 	bool m_bInitialized;
 	AA_CCameraManager m_CameraManager;
+
+	void Initialize();
+	static void StaticInitialize();
 };
 
-static AASystemRED* G_AASystemRED;
+inline AASystemRED* GAASystemRed;
