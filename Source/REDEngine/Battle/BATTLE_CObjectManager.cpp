@@ -1,5 +1,8 @@
 ﻿#include "BATTLE_CObjectManager.h"
 
+#include "Constants.h"
+#include "REDEngine/GameState/REDGameState_Battle.h"
+
 BATTLE_CObjectManager::BATTLE_CObjectManager()
 {
 	memset(m_MultiBufferLarge.m_Memory, 0, sizeof m_MultiBufferLarge.m_Memory);
@@ -128,4 +131,192 @@ void BATTLE_CObjectManager::BOM_ConstructorSub()
 	GameSpeedControlParam.InCurve = -1;
 	GameSpeedControlParam.bRequestApplyParticle = false;
 	m_GameFrame = 0;
+}
+
+void BATTLE_CObjectManager::ControlBattleObject()
+{
+	if (m_UsesObjPtrVectorNum)
+	{
+		for (int i = m_UsesObjPtrVectorNum; i >= 0; --i)
+		{
+			if (m_ObjPtrVector[m_UsesObjPtrVectorNum - i]->m_ActiveState >= 4)
+			{
+				{
+					if (m_ObjPtrVector[m_UsesObjPtrVectorNum - i]->m_ActiveState == 6)
+					{
+						m_ObjPtrVector[m_UsesObjPtrVectorNum - i]->m_ActiveState = ACTV_WAITING_1;
+					}
+					else if (m_ObjPtrVector[m_UsesObjPtrVectorNum - i]->m_ActiveState == 5)
+					{
+						m_ObjPtrVector[m_UsesObjPtrVectorNum - i]->m_ActiveState = ACTV_WAITING_BEGIN;
+					}
+					else if (m_ObjPtrVector[m_UsesObjPtrVectorNum - i]->m_ActiveState == 4 && ! m_ObjPtrVector[m_UsesObjPtrVectorNum - i]->m_WatchedCount)
+					{
+						m_ObjPtrVector[m_UsesObjPtrVectorNum - i]->m_ActiveState = ACTV_NOT_ACTIVE;
+					}
+				}
+			}
+		}
+	}
+	if constexpr (DBM_VAL_CONST_TABLE[DBM_StopDebug])
+	{
+		AllActiveCheck();
+	}
+	AREDGameState_Battle* GameState = Cast<AREDGameState_Battle>(GWorld->GetGameState());
+	if (IsValid(GameState))
+	{
+		
+	}
+	m_BOMFlag &= 0xFFFFFEDF;
+	m_DiffusionFilter2LevelMax = 0;
+	m_DiffusionFilter2SaturationMin = 1000;
+	for (int i = 0; i < m_ActiveObjectCount; i++)
+	{
+		//m_SortedObjPtrVector[i]->ControlPhase_PreFrameStep();
+	}
+}
+
+int IsControlPrioritySmallSub_(const void *_a, const void *_b)
+{
+	OBJ_CBase* ObjA = *(OBJ_CBase**)_a;
+	OBJ_CBase* ObjB = *(OBJ_CBase**)_b;
+	if (ObjA->m_ActiveState == ACTV_ACTIVE || ObjB->m_ActiveState == ACTV_ACTIVE)
+	{
+		if ((ObjA->m_ObjFlag4 >> 19) ^ (ObjB->m_ObjFlag4 >> 19) & 1)
+		{
+			return (ObjA->m_ObjFlag4 & 0x80000) == 0;
+		}
+		bool IsObjAPlayer = ObjA->m_IsPlayerObj;
+		bool IsObjBPlayer = ObjB->m_IsPlayerObj;
+		if (IsObjAPlayer == IsObjBPlayer == true)
+		{
+			OBJ_CCharBase* PlayerSideA = ObjA->GetMainPlayerBase(ObjA->m_SideID.GetValue());
+			if (PlayerSideA != ObjB->GetMainPlayerBase(ObjB->m_SideID.GetValue()))
+			{
+				return ObjA != ObjA->GetMainPlayerBase(ObjA->m_SideID.GetValue());
+			}
+			int ObjectSortPriorityA = ObjA->m_ObjectSortPriority;
+			int ObjectSortPriorityB = ObjB->m_ObjectSortPriority;
+			int AtkPriorityA = ObjA->m_AtkPriority;
+			int AtkPriorityB = ObjB->m_AtkPriority;
+			int UniqIdA = ObjA->m_UniqID;
+			int UniqIdB = ObjB->m_UniqID;
+			if (ObjectSortPriorityA == ObjectSortPriorityB
+				&& AtkPriorityA < AtkPriorityB && UniqIdA < UniqIdB)
+			{
+				return false;
+			}
+			return ObjA < ObjB;
+		}
+		if (IsObjAPlayer == IsObjBPlayer == false)
+		{
+			int ObjectSortPriorityA = ObjA->m_ObjectSortPriority;
+			int ObjectSortPriorityB = ObjB->m_ObjectSortPriority;
+			int AtkPriorityA = ObjA->m_AtkPriority;
+			int AtkPriorityB = ObjB->m_AtkPriority;
+			int UniqIdA = ObjA->m_UniqID;
+			int UniqIdB = ObjB->m_UniqID;
+			bool IsObjAHigherPriority = ObjectSortPriorityA < ObjectSortPriorityB;
+			if (ObjectSortPriorityA == ObjectSortPriorityB
+				&& AtkPriorityA < AtkPriorityB && UniqIdA < UniqIdB)
+			{
+				return false;
+			}
+			return (uint64)ObjA < (uint64)ObjB;
+		}
+		return IsObjAPlayer == 0;
+	}
+	return ObjA->m_ActiveState != 1;
+}
+
+int IsControlPriorityBig_(const void *_a, const void *_b)
+{
+	if (IsControlPrioritySmallSub_(_a, _b))
+	{
+		return 1;
+	}
+	return -1;
+}
+
+void BATTLE_CObjectManager::AllActiveCheck()
+{
+	m_ActiveObjectCount = 0;
+	m_NoActiveObjectCount = 0;
+	int counter = 0;
+	int deletedObjects = 0;
+	int ActiveObjectCount = 0;
+	int v26 = 0;
+	int EtcActiveObjectCount = 0;
+	int Num = 0;
+	int OrigUsesObjPtrVectorNum = m_UsesObjPtrVectorNum;
+	if (m_UsesObjPtrVectorNum)
+	{
+		int UsesObjPtrVectorNum = Num = m_UsesObjPtrVectorNum;
+		auto ObjPtrVector = m_ObjPtrVector;
+		while (true)
+		{
+			auto ObjPtr = *ObjPtrVector;
+			if (ObjPtr->m_ActiveState)
+			{
+				if (!(ObjPtr->m_ActiveState - 2))
+				{
+					if (ObjPtr->m_ActiveState - 1)
+					{
+						ObjPtr->m_ActiveState = ACTV_ACTIVE;
+					}
+					++ActiveObjectCount;
+					++Num;
+					EtcActiveObjectCount = v26;
+					goto end;
+				}
+				if (ObjPtr->m_ActiveState - 2 == 1)
+				{
+					//ObjPtr->OnDelete();
+					UsesObjPtrVectorNum = m_UsesObjPtrVectorNum;
+				}
+				v26 = ++EtcActiveObjectCount;
+			}
+			else
+			{
+				++counter;
+			}
+			end:
+			ObjPtrVector += 1;
+			m_UsesObjPtrVectorNum = --UsesObjPtrVectorNum;
+			if (!UsesObjPtrVectorNum)
+			{
+				deletedObjects = counter;
+				counter = 0;
+				break;
+			}
+		}
+	}
+	m_NoActiveObjectCount = deletedObjects;
+	m_EtcActiveObjectCount = EtcActiveObjectCount;
+	if (Num > 0)
+	{
+		for (int i = 0; i < Num; i++)
+		{
+			if (m_ObjVector[i].m_ActiveState == ACTV_REQ_NO_ACTIVE)
+			{
+				--ActiveObjectCount;
+				++m_EtcActiveObjectCount;
+			}
+		}
+	}
+	m_ActiveObjectCount = ActiveObjectCount;
+	if (OrigUsesObjPtrVectorNum)
+	{
+		for (int i = 0; i < OrigUsesObjPtrVectorNum; i++)
+		{
+			if (m_SortedObjPtrVector[i]->m_ActiveState == ACTV_ACTIVE)
+			{
+				--ActiveObjectCount;
+				counter = i;
+				if (ActiveObjectCount <= 0)
+					break;
+			}
+		}
+	}
+	qsort(m_SortedObjPtrVector, counter + 1, 8, IsControlPriorityBig_);
 }

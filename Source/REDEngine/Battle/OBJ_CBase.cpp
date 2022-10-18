@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "OBJ_CCharBase.h"
 #include "DataTypes/AttackFlags.h"
+#include "REDEngine/GameState/REDGameState_Battle.h"
 
 CAtkParam::CAtkParam()
 {
@@ -176,6 +177,70 @@ void OBJ_CBase::ObjectConstructor_ForObject()
 	m_BoneCtrl.SetResetOnActionChange(true);
 	m_ResetOverwriteLinkBoneOnActionChange = true;
 	
+}
+
+int OBJ_CBase::GetOperandVal(const COperand* elm)
+{
+	if (!elm->m_Target)
+		return elm->m_Val;
+	OBJ_CCharBase* Player = (OBJ_CCharBase*)m_pParentPly.m_Ptr;
+	OBJ_CBase* Target = m_pTargetObj.m_Ptr;
+	if (!Target)
+		return 0;
+	switch (elm->m_Val)
+	{
+	case 0:
+		return m_TmpReg;
+	case 1:
+		return m_AngleDeg_x1000;
+	case 2:
+		return m_CommonActionMark;
+	case 3:
+		return Player->m_PrivateVal[0];
+	case 4:
+		return Player->m_PrivateVal[1];
+	case 5:
+		return Player->m_PrivateVal[2];
+	case 6:
+		return Player->m_PrivateVal[3];
+	case 7:
+		if (m_Direction)
+			return -m_SpeedX;
+		return m_SpeedX;
+	case 8:
+		return m_SpeedY;
+	default:
+		return 0;
+	}
+}
+
+void OBJ_CBase::CreateObjectArg(CXXBYTE<32>* actName, POS_TYPE exPoint)
+{
+	
+}
+
+void OBJ_CBase::CreateArg_Init()
+{
+	m_CreateArg.m_CreateArg_SocketName.m_Buf[0] = 0;
+	m_CreateArg.m_CreateArg_Angle = 0i64;
+	m_CreateArg.m_CreateArg_OffsetPosX = 0i64;
+	m_CreateArg.m_CreateArg_OffsetPosZ = 0;
+	m_CreateArg.m_CreateArg_Hikitsugi1 = 0i64;
+	m_CreateArg.m_CreateArg_TransPriority = 0i64;
+	m_CreateArg.m_CreateArg_LinkMaterialParticle = nullptr;
+	m_CreateArg.m_CreateArg_Delay = 0;
+	m_CreateArg.m_CreateArg_ScaleX = 1000;
+	m_CreateArg.m_CreateArg_ScaleY = 1000;
+	m_CreateArg.m_CreateArg_ScaleZ = 1000i64;
+	m_CreateArg.m_CreateArg_MltColor = -1;
+	m_CreateArg.m_CreateArg_SocketOwner = CO_PLAYER;
+	m_CreateArg.m_CreateArg_PointLightSide = -1i64;
+}
+
+void OBJ_CBase::CreateArg_HikitsugiVal(COperand param0, COperand param1)
+{
+	m_CreateArg.m_CreateArg_Hikitsugi0 = GetOperandVal(&param0);
+	m_CreateArg.m_CreateArg_Hikitsugi1 = GetOperandVal(&param1);
 }
 
 void OBJ_CBase::SetHitPointMax(int val)
@@ -471,4 +536,110 @@ void OBJ_CBase::GetPushWorldRectForWorldClip(int* L, int* R)
 		if ( *R < Ra )
 			*R = Ra;
 	}
+}
+
+void OBJ_CBase::ControlPhase_PreFrameStep()
+{
+	OBJ_CCharBase* Player = (OBJ_CCharBase*)this;
+	if (!m_IsPlayerObj)
+		Player = nullptr;
+	if (Player)
+	{
+		int CtrlDir = Player->m_CtrlDir;
+		if (Player->m_InpFlag[CtrlDir][244] && (Player->m_InpFlag[CtrlDir][120] || Player->m_InpFlag[CtrlDir][94]))
+		{
+			Player->m_ThrowInputTime = 0;
+			if (Player->m_InpFlag[CtrlDir][1] || Player->m_InpFlag[CtrlDir][10] || Player->m_InpFlag[CtrlDir][19] || Player->m_InpFlag[CtrlDir][28])
+			{
+				Player->m_ThrowInputTime = 100;
+			}
+		}
+		bool CanThrowTech = strncmp(Player->m_CurActionName.m_Buf, AN_CmnActLockWait.m_Buf, 0x20) || Player->m_ActionTime < DBM_VAL_CONST_TABLE[DBM_Nagenuke_afterCnt];
+		if (Player->m_ThrowInputTime < DBM_VAL_CONST_TABLE[DBM_Nagenuke_prevCnt] && Player->m_CollisionFlag & 0x800 && Player->m_CollisionFlag2 & 0x800 && CanThrowTech)
+		{
+			Player->m_CollisionFlag2 &= ~0x800;
+			CreateArg_Init();
+			bool ThrowClash;
+			if (Player->m_DmgParam.m_AtkFlag4 & 0x20)
+			{
+				CreateArg_HikitsugiVal(COperand(0, 1), COperand(0, 0));
+				ThrowClash = true;
+			}
+			else
+			{
+				CreateArg_HikitsugiVal(COperand(0, 0), COperand(0, 0));
+			}
+			CXXBYTE<32> ObjectName;
+			strncpy(ObjectName.m_Buf, "cmn_nagenuke", 0x20);
+			CreateObjectArg(&ObjectName, POS_ZERO);
+		}
+		COperand IsAfro = COperand(2, 324);
+		if (GetOperandVal(&IsAfro))
+		{
+			if (!Player->m_IsCreateAfroObj)
+			{
+				
+			}
+		}
+	}
+	++m_ObjTimer;
+	m_bFaceBrowChanged = false;
+	m_bFaceMouthChanged = false;
+	m_bHairChanged = false;
+	m_ObjSignal = 0;
+	if (!(m_ObjFlag & 0x4000000) && !(m_ObjFlag2 & 0x200000))
+	{
+		if (m_HitStopTimeBySousai)
+			m_HitStopTimeBySousai--;
+		else
+		{
+			if (m_HitStopTime)
+				m_HitStopTime--;
+		}
+	}
+	if (m_ObjShakeXTime)
+		m_ObjShakeXTime--;
+	if (m_VoiceInfo.m_bDamageVoiceRequest && !m_HitStopTime)
+	{
+		CXXBYTE<16> DamageVoice;
+		strncpy(DamageVoice.m_Buf, m_VoiceInfo.m_DamageVoiceName.m_Buf, 0x10);
+		//OBJ_CBase::Voice(&DamageVoice);
+		m_VoiceInfo.m_bDamageVoiceRequest = false;
+	}
+	if (m_CollisionFlag & 0x800)
+	{
+		if (Player)
+		{
+			if (Player->m_LockWaitTime)
+				Player->m_BurstLog--;
+			if (Player->m_LockWaitTime <= 0 && !(m_CollisionFlag & 0x2000))
+			{
+				m_CollisionFlag |= 0x4000;
+				m_pLockLinkObj.m_Ptr->m_CollisionFlag |= 0x4000;
+			}
+		}
+	}
+	if (m_CollisionFlag & 0x20000)
+	{
+		if (m_CollisionFlag & 0x4000)
+		{
+			//OBJ_CBase::CellStop(0);
+			this->m_CollisionFlag &= ~0x20000;
+		}
+		else
+		{
+			//OBJ_CBase::CellStop(1);
+		}
+	}
+	
+}
+
+OBJ_CCharBase* OBJ_CBase::GetMainPlayerBase(SIDE_ID side)
+{
+	AREDGameState_Battle* GameState = Cast<AREDGameState_Battle>(GWorld->GetGameState());
+	if (IsValid(GameState))
+	{
+		return GameState->BattleObjectManager.Get()->m_TeamManager[side].m_pMainPlayerObject;
+	}
+	return nullptr;
 }

@@ -212,4 +212,6 @@ public:
 	OBJ_CCharBase m_CharVector[6];
 
 	void BOM_ConstructorSub();
+	void ControlBattleObject();
+	void AllActiveCheck();
 };

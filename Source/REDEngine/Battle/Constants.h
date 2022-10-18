@@ -1690,3 +1690,5 @@ static float GetObjMaterialParamDefaultVal(MATERIAL_PARAM param)
 {
 	return s_MaterialDefaultValList[param];
 }
+
+constexpr CXXBYTE<32> AN_CmnActLockWait { "CmnActLockWait" };

@@ -13,6 +13,7 @@
 #include "DataTypes/StatisticsCheckSkillData.h"
 #include "DataTypes/TBlendParam.h"
 
+class OBJ_CCharBase;
 class AREDDestructionShotObject;
 class AREDPawn;
 class CBBSFileAnalyzeData;
@@ -962,6 +963,10 @@ public:
 
 	//functions
 	void ObjectConstructor_ForObject();
+	int GetOperandVal(const COperand* elm);
+	void CreateObjectArg(CXXBYTE<32> *actName, POS_TYPE exPoint);
+	void CreateArg_Init();
+	void CreateArg_HikitsugiVal(COperand param0, COperand param1);
 	void SetHitPointMax(int val);
 	void SetHitPoint(int val);
 	void SetupPawn();
@@ -976,4 +981,6 @@ public:
 	void GetPushScreenRect(int *L, int *T, int *R, int *B);
 	void GetPushWorldRect(int *L, int *T, int *R, int *B);
 	void GetPushWorldRectForWorldClip(int *L, int *R);
+	void ControlPhase_PreFrameStep();
+	OBJ_CCharBase* GetMainPlayerBase(SIDE_ID side);
 };
