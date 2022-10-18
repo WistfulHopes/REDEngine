@@ -157,7 +157,7 @@ void AA_CCamera::Update()
 			v17 = FVector::ZeroVector.Z;
 		}
 	}
-	FMatrix Matrix[3];
+	/*FMatrix Matrix[3];
 	Matrix[0].M[0][3] = 0;
 	Matrix[0].M[1][3] = 0;
 	Matrix[0].M[2][3] = 0;
@@ -285,7 +285,7 @@ void AA_CCamera::Update()
 	pP2.Y = pP1.Y;
 	pP1.X = *(double*)&v55;
 	pP2.X = *(double*)&v55;
-	PlaneFromPoint(&pP0, &pP1, &pP2, &m_FOVBottomPlane);
+	PlaneFromPoint(&pP0, &pP1, &pP2, &m_FOVBottomPlane);*/
 }
 
 float CalcBattleCameraLinkMagn(AA_CCamera* cam, AA_Vector3* pos0, AA_Vector3* pos1)

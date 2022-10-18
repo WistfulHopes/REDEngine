@@ -57,5 +57,4 @@ void AREDGameState_Battle::UpdateBattle(float DeltaSeconds)
 void AREDGameState_Battle::UpdateBattleSub(float DeltaSeconds, bool bUpdateDraw)
 {
 	ScreenManager->UpdateScreenPosition(false);
-	
 }

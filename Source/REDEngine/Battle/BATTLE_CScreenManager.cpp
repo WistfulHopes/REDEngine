@@ -906,7 +906,7 @@ void BATTLE_CScreenManager::SetScreenCornerObject(bool bQuick)
 
 void BATTLE_CScreenManager::LinkCameraMove()
 {
-  if (!m_pCamera)
+  /*if (!m_pCamera)
     return;
   AA_Vector3 out;
   m_pCamera->CreateVec3Dir(&out);
@@ -1187,5 +1187,5 @@ void BATTLE_CScreenManager::LinkCameraMove()
       m_WorldSideMoveDeg = v50;
     }
   }
-  //m_OffsetMatrix = Matrix.Inverse();
+  //m_OffsetMatrix = Matrix.Inverse();*/
 }

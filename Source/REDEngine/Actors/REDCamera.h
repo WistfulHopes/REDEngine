@@ -195,6 +195,7 @@ public:
 	FSplineCurvesParam SplineCurve;
 	FPlayBattleCameraAnimArg PlayBattleCameraAnimArg;
 
+	virtual void UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime) override;
 	void UpdateViewTargetFromBattle(double DeltaTime);
 	void UpdateCameraLocation(FMinimalViewInfo* POV, float DeltaTime, bool bWithoutBattleCameraRotation);
 };
